@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
         borderColor: '#000000',
         width: '100%',
         borderWidth: 3,
-        height: Dimensions.get("window").height < 880 ? 240 : 310 ,
+        height: Dimensions.get("window").height < 880 ? 240 : 280 ,
         position: "absolute",
         bottom: 120,
     }

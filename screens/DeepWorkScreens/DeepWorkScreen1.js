@@ -4,14 +4,20 @@ import {Dimensions} from 'react-native';
 import PrimaryButton from "../../components/primaryButton";
 import Screen1QuestiosCard from "../../components/Screen1QuestiosCard";
 import QuestionComponent from "../../components/QuestionComponent";
+import OutterContainer from "../../components/OutterContainer";
+import GradientScreenWrapper from "../../components/GradientScreenWrapper";
 
-export default function Screen1(){
+export default function Screen1({navigation}){ 
 
+    function PressHandler() {
+        navigation.navigate('deepWorkScreen2')
+    } ;
     return(
-        <View style={styles.outterContainer}>
+        <GradientScreenWrapper>
+        <OutterContainer>
             <Text style={styles.titleText}>plan to rise and shine</Text>
             <FocusCard />
-            <PrimaryButton style={styles.startButton}>
+            <PrimaryButton onPress={PressHandler}>
               { "COMPLETE RITUAL"}
             </PrimaryButton>
             <Screen1QuestiosCard>
@@ -24,29 +30,18 @@ export default function Screen1(){
             
                 
                 
-          
-        </View>
-
+        
+        </OutterContainer>
+        </GradientScreenWrapper>
     )
 }
 
+const screenWidth = Dimensions.get("window").width ;
+const screenHeight = Dimensions.get("window").height ;
+
 const styles=StyleSheet.create({
 
-   outterContainer: {
-     flex: 1,
-    padding: 24,    
-    marginTop: 60,
-    marginBottom: 140,
-    width: Dimensions.get("window").width < 390 ? 350 : 400 ,
-    alignContent: "center",
-    alignItems: "center",
-    borderColor: '#000000',
-    borderWidth: 3,
-    borderRadius: 15,
-    alignSelf: "center",
-    
-
-   },
+  
    titleText: {
     fontWeight: "bold",
     fontSize: 24,

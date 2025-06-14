@@ -2,30 +2,32 @@ import { Children } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
 
 
-export default function OutterContainer({Children}) {
+export default function OutterContainer({children}) {
 
     return(
         <View style={styles.outterContainer}>
-            {Children}
+            {children}
         </View>
     )
 }
 
+const screenWidth = Dimensions.get("window").width ;
+const screenHeight = Dimensions.get("window").height ;
 const styles = StyleSheet.create({
 
     outterContainer: {
-           flex: 1,
-        padding: Dimensions.get("window").width < 390 ? 10 : 24,    
-        marginTop: 60,
-        marginBottom: 140,
-        width: Dimensions.get("window").width < 390 ? 350 : 400 ,
-        alignContent: "center",
-        alignItems: "center",
-        borderRadius: 15,
-        alignSelf: "center",
-        backgroundColor: 'beige',
+     flex: 1,
+    padding: 10,    
+    marginTop: 50,
+    marginBottom: 140,
+    width: screenWidth < 390 ? 350 : 400 ,
+    alignContent: "center",
+    alignItems: "center",
+    borderColor: '#000000',
+    borderWidth: 3,
+    borderRadius: 15,
+    alignSelf: "center",
     
-        //  borderColor: '#000000',
-        // borderWidth: 3,
-        },
+
+   },
 })

@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 // Import cleaned SVG icons
 import Plan from '../assets/icons/plan.svg';
@@ -7,17 +8,22 @@ import Focus from '../assets/icons/focus.svg';
 import Checkin from '../assets/icons/checkin.svg';
 import Reflect from '../assets/icons/reflect.svg';
 import Insights from '../assets/icons/insights.svg';
-import Screen2 from '../screens/DeepWorkScreens/Screen2';
+import Screen2 from '../screens/DeepWorkScreens/DeepWorkScreen2';
 
-const navItems = [
-  {  icon: Plan, onPress: () => {} }, //implement react-navigation - screen2
-  {  icon: Focus, onPress: () => console.log('Focus') },
-  {  icon: Checkin, onPress: () => console.log('Check-In') },
-  {  icon: Reflect, onPress: () => console.log('Reflect') },
-  {  icon: Insights, onPress: () => console.log('Insights') },
-];
+
 
 function BottomNavBar() {
+  const navigation = useNavigation() ;
+
+  const navItems = [
+  {  icon: Plan, onPress: () => navigation.navigate('deepWorkScreen1') }, //implement react-navigation - screen2
+  {  icon: Focus, onPress: () => navigation.navigate('deepWorkScreen1') },
+  {  icon: Checkin, onPress: () => navigation.navigate('Check-In') },
+  {  icon: Reflect, onPress: () => navigation.navigate('deepWorkScreen1') },
+  {  icon: Insights, onPress: () => navigation.navigate('Insights') },
+];
+
+
   return (
     <View style={styles.bottomBar}>
       {navItems.map((item, index) => {

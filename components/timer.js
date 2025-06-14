@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
       ios: screenHeight * 0.03,       // 8% from top on iOS
       android: screenHeight * 0.01,   // 4% from top on Android
     }),
-    backgroundColor: '#999', // Remove this in final unless debugging layout
+    //backgroundColor: '#999', // Remove this in final unless debugging layout
   },
   centerText: {
     position: 'absolute',
