@@ -1,8 +1,10 @@
-// App.js
+import React from 'react';
 import { StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 // Screens
 import DeepWorkScreen1 from './screens/DeepWorkScreens/DeepWorkScreen1';
@@ -19,60 +21,78 @@ import Reflect from './assets/icons/reflect.svg';
 import Insights from './assets/icons/insights.svg';
 
 const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
 
+/**
+ * Bottom Tabs (used inside Stack)
+ */
+function BottomTabs() {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarShowLabel: false,
+        tabBarStyle: {
+          backgroundColor: '#fdfdfd',
+          borderTopLeftRadius: 10,
+          borderTopRightRadius: 10,
+          height: 100,
+          paddingBottom: 13,
+          paddingTop: 20,
+          position: 'absolute',
+        },
+        tabBarIcon: ({ focused, size }) => {
+          let IconComponent;
+
+          switch (route.name) {
+            case 'Plan':
+              IconComponent = Plan;
+              break;
+            case 'Focus':
+              IconComponent = Focus;
+              break;
+            case 'Check-In':
+              IconComponent = Checkin;
+              break;
+            case 'Reflect':
+              IconComponent = Reflect;
+              break;
+            case 'Insights':
+              IconComponent = Insights;
+              break;
+          }
+
+          return <IconComponent width={60} height={60} />;
+        },
+      })}
+    >
+      <Tab.Screen name="Plan" component={DeepWorkScreen1} />
+      <Tab.Screen name="Focus" component={DeepWorkScreen2} />
+      <Tab.Screen name="Check-In" component={CheckInScreen1} />
+      <Tab.Screen name="Reflect" component={DeepWorkSummary} />
+      <Tab.Screen name="Insights" component={HabitTracker} />
+    </Tab.Navigator>
+  );
+}
+
+/**
+ * Main App Component
+ */
 export default function App() {
   return (
-    <LinearGradient
-      colors={['#55355F', '#C97C76', '#FECE7D']}
-      style={styles.background}
-    >
+  <GestureHandlerRootView style={{ flex: 1 }}>
+    <LinearGradient colors={['#55355F', '#C97C76', '#FECE7D']} style={styles.background}>
       <NavigationContainer>
-        <Tab.Navigator
-          screenOptions={({ route }) => ({
-            headerShown: false,
-            tabBarShowLabel: false,
-            tabBarStyle: {
-              backgroundColor: '#fdfdfd',
-              borderTopLeftRadius: 10,
-              borderTopRightRadius: 10,
-              height: 100,
-              paddingBottom: 13,
-              paddingTop: 20,
-              position: 'absolute',
-            },
-            tabBarIcon: ({ focused, size }) => {
-              let IconComponent;
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          {/* Tab Screens as Home */}
+          <Stack.Screen name="HomeTabs" component={BottomTabs} />
 
-              switch (route.name) {
-                case 'Plan':
-                  IconComponent = Plan;
-                  break;
-                case 'Focus':
-                  IconComponent = Focus;
-                  break;
-                case 'Check-In':
-                  IconComponent = Checkin;
-                  break;
-                case 'Reflect':
-                  IconComponent = Reflect;
-                  break;
-                case 'Insights':
-                  IconComponent = Insights;
-                  break;
-              }
-
-              return <IconComponent width={60} height={60}/>;
-            },
-          })}
-        >
-          <Tab.Screen name="Plan" component={DeepWorkScreen1} />
-          <Tab.Screen name="Focus" component={DeepWorkScreen2} />
-          <Tab.Screen name="Check-In" component={CheckInScreen1} />
-          <Tab.Screen name="Reflect" component={DeepWorkSummary} />
-          <Tab.Screen name="Insights" component={HabitTracker} />
-        </Tab.Navigator>
+          {/* Deep Work Screens for direct navigation */}
+          <Stack.Screen name="deepWorkScreen2" component={DeepWorkScreen2} />
+        </Stack.Navigator>
       </NavigationContainer>
     </LinearGradient>
+  </GestureHandlerRootView>
   );
 }
 

@@ -17,10 +17,10 @@ const styles = StyleSheet.create({
 
     focusOutterContainer: {
         alignSelf: "center",
-        height: 210,
-        width: 210,
+        height: 180,
+        width: 180,
         position: "absolute",
-        top: 60,
+        bottom: 100,
         backgroundColor: '#ff3636',
         flex: 1,
         marginTop: 20,
@@ -31,8 +31,8 @@ const styles = StyleSheet.create({
     },
     innerContainer: {
 
-        height: 190,
-        width: 190,
+        height: 160,
+        width: 160,
         backgroundColor: '#e5cd84',
         borderRadius: 120,
         alignSelf: "center",
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         fontSize: 40,
         position:"absolute",
-        top: 65,
+        top: 50,
         alignSelf: "center"
     }
 })

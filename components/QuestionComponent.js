@@ -1,48 +1,49 @@
-import { View, StyleSheet, Text } from "react-native";
-import React from 'react';
+import React, { useState } from 'react';
+import { Text, View, TextInput, StyleSheet } from 'react-native';
 
+/**
+ * This component displays a question followed by a text input field.
+ * You can pass `children` as the question text from the parent.
+ */
+export default function QuestionComponent({ children }) {
+  const [answer, setAnswer] = useState('');
 
-export default function QuestionComponent({children}) {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.questionText}>{children}</Text>
 
-    return(
-        <View style={styles.outterContainer}>
-          {React.Children.map(children, (child, index) => (
-        <View style={[styles.childWrapper, index === 0 && { marginTop: 0 }]}>
-         <Text style={styles.textProps}>{child}</Text> 
-        </View>
-      ))}
-        </View>
-    ) ;
+      {/* TextInput for user to type answer */}
+      <TextInput
+        style={styles.input}
+        placeholder="Type your answer here..."
+        value={answer}
+        onChangeText={setAnswer}
+        multiline
+      />
+    </View>
+  );
 }
 
-
 const styles = StyleSheet.create({
-
-    outterContainer: {
-
-        borderWidth: 1,
-        borderColor: '#000000',
-        alignSelf: "flex-start",
-        fontSize: 24,
-        width: '100%' ,
-         
-        flexDirection: "column",
-        flexWrap: "wrap",
-        marginTop: 10,
-        marginBottom: 10,
-        
-    } ,
-
-    textProps: {
-
-       
-        padding: 0,
-        fontWeight: 'semibold',
-        fontSize: 22,
-        color: '#aa0a9d'
-    },
-     childWrapper: {
-    margin: 10,
+  container: {
+    padding: 12,
+    borderBottomColor: '#ccc',
+    borderBottomWidth: 1,
   },
-
-})
+  questionText: {
+    fontSize: 18,
+    marginBottom: 8,
+    fontWeight: '500',
+    color: '#333',
+  },
+  input: {
+    height: 40,
+    borderColor: '#999',
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 10,
+    fontSize: 16,
+    textAlignVertical: 'top', // for Android to start from top-left corner
+    backgroundColor: '#fff',
+  },
+});
