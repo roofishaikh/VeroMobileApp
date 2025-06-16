@@ -12,14 +12,14 @@ export default function QuestionComponent({ children }) {
     <View style={styles.container}>
       <Text style={styles.questionText}>{children}</Text>
 
-      {/* TextInput for user to type answer */}
+      {/* TextInput for user to type answer
       <TextInput
         style={styles.input}
         placeholder="Type your answer here..."
         value={answer}
         onChangeText={setAnswer}
         multiline
-      />
+      /> */}
     </View>
   );
 }

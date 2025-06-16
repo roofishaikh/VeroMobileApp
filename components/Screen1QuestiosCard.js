@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Dimensions, ScrollView } from 'react-native';
+import { View, StyleSheet, Dimensions, ScrollView, Text } from 'react-native';
 import QuestionComponent from './QuestionComponent';
 
 /**
@@ -17,6 +17,7 @@ export default function Screen1QuesionsCard() {
 
   return (
     <View style={styles.outterContainer}>
+      <Text style={styles.titleText}>plan to rise and shine</Text>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {questions.map((question, index) => (
           <View key={index} style={styles.questionBlock}>
@@ -29,24 +30,46 @@ export default function Screen1QuesionsCard() {
     </View>
   );
 }
-
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const styles = StyleSheet.create({
   outterContainer: {
-    flexDirection: 'column',
-    //borderColor: '#000000',
-    width: '100%',
-    //borderWidth: 3,
-    height: Dimensions.get('window').height < 880 ? 320 : 410,
     position: 'absolute',
-    top: 60,
-    backgroundColor: 'beige',
-    borderRadius: 10,
+    width: SCREEN_WIDTH * 0.85,
+    height: SCREEN_HEIGHT < 900 ? (SCREEN_HEIGHT * 0.50) : (SCREEN_HEIGHT * 0.55) ,
+    backgroundColor: '#FFF5E0',
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    marginTop: 60,
+    padding: 15,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 4,
+    pointerEvents: 'box-none',
+    //  borderColor: '#000000',
+    // borderWidth: 3,
   },
   scrollContent: {
-    paddingVertical: 10,
-    paddingHorizontal: 12,
+    paddingVertical: 5,
+    paddingHorizontal: 5,
+    // borderWidth: 3,
+    // borderColor: '#000000',
+    flex: 1,
+    marginTop: 2,
+    
   },
   questionBlock: {
-    marginBottom: 16,
+    marginBottom: 10,
+    
   },
+  titleText: {
+    fontWeight: "bold",
+    fontSize: 24,
+    color: "#ed9aed",
+    marginBottom: 20,
+    textAlign: 'center',
+    marginBottom: 15,
+  }
 });

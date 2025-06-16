@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Pressable, Text, Dimensions } from "react-native";
+import ConfettiCannon from 'react-native-confetti-cannon';
+import { View, StyleSheet, Pressable, Text, Dimensions, TextInput,
+TouchableWithoutFeedback, Keyboard, ScrollView } from "react-native";
 import PrimaryButton from "../../components/primaryButton";
 import Timer from "../../components/timer";
 import GradientScreenWrapper from "../../components/GradientScreenWrapper";
@@ -12,21 +14,22 @@ import Animated, {
   withSpring,
   runOnJS,
 } from "react-native-reanimated";
+import { Checkbox } from 'react-native-paper';
 import { MaterialIcons } from "@expo/vector-icons";
+import { initialGoals } from "../../Data/goalsData";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.25;
 
-function Screen2() {
+
+
+
+function DeepWorkScreen2({ navigation }) {
   const [duration, setDuration] = useState(25 * 60);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [showStopwatchCard, setShowStopwatchCard] = useState(false);
   const [showSetTimeCard, setShowSetTimeCard] = useState(false);
-  const [goals, setGoals] = useState([
-    { id: 1, text: "Finish writing summary" },
-    { id: 2, text: "Take 5 min break" },
-    { id: 3, text: "Plan next session" },
-  ]);
+  const [goals, setGoals] = useState(initialGoals);
   const [nextId, setNextId] = useState(4);
 
   const translateX = useSharedValue(0);
@@ -75,19 +78,36 @@ function Screen2() {
   };
 
   const handleAdd = () => {
-    setGoals((prev) => [...prev, { id: nextId, text: `New Goal ${nextId}` }]);
+    setGoals((prev) => [...prev, { id: nextId, text: `New Goal ${nextId}`, subgoals: [] }]);
     setNextId((id) => id + 1);
   };
 
   const handleStartStop = () => {
     if (!isTimerRunning) setShowStopwatchCard(false);
     setIsTimerRunning((prev) => !prev);
+    if (isTimerRunning) navigation.navigate("DeepWorkScreen3");
   };
 
   const handleTimeSet = (min) => {
     setDuration(min * 60);
     setShowSetTimeCard(false);
   };
+
+    const [showConfetti, setShowConfetti] = useState(false);
+
+  const toggleSubgoal = (goalIndex, subIndex) => {
+    const updated = [...goals];
+    updated[goalIndex].subgoals[subIndex].isCompleted = !updated[goalIndex].subgoals[subIndex].isCompleted;
+    setGoals(updated);
+
+    // Trigger confetti only when marking as completed
+  if (updated[goalIndex].subgoals[subIndex].isCompleted) {
+    setShowConfetti(true);
+  }
+};
+  
+
+
 
   return (
     <GradientScreenWrapper>
@@ -100,10 +120,45 @@ function Screen2() {
               enabled={isTop}
               onGestureEvent={gestureHandler}
             >
-              <Animated.View
-                style={[styles.card, isTop && animatedCardStyle]}
-              >
-                <Text style={styles.cardText}>{goal.text}</Text>
+              <Animated.View style={[styles.card, isTop && animatedCardStyle]}>
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                  <ScrollView
+  style={{ flexGrow: 1 }}
+  contentContainerStyle={{ justifyContent: 'flex-start', paddingBottom: 20 }}
+  showsVerticalScrollIndicator={false}
+>
+                    <TextInput
+                      style={styles.cardText}
+                      multiline={true}
+                      value={goal.text}
+                      onChangeText={(newText) => {
+                        const updatedGoals = [...goals];
+                        updatedGoals[index].text = newText;
+                        setGoals(updatedGoals);
+                      }}
+                    />
+
+                    {goal.subgoals.map((sub, subIdx) => (
+                      <View key={sub.id} style={styles.subgoalRow}>
+                        <Checkbox
+                          status={sub.isCompleted ? 'checked' : 'unchecked'}
+                          onPress={() => toggleSubgoal(index, subIdx)}
+                          color="#4CAF50"
+                          uncheckedColor="#ccc"
+                        />
+                        <TextInput
+                          value={sub.text}
+                          onChangeText={(newText) => {
+                            const updatedGoals = [...goals];
+                            updatedGoals[index].subgoals[subIdx].text = newText;
+                            setGoals(updatedGoals);
+                          }}
+                          style={styles.subgoalText}
+                        />
+                      </View>
+                    ))}
+                  </ScrollView>
+                </TouchableWithoutFeedback>
                 <View style={styles.iconRow}>
                   <Pressable onPress={handleDelete} style={styles.iconButton}>
                     <MaterialIcons name="delete" size={24} color="#F45B47" />
@@ -118,7 +173,6 @@ function Screen2() {
         }).reverse()}
       </View>
 
-      {/* Tapable Timer */}
       {!showStopwatchCard && !showSetTimeCard && (
         <Pressable onPress={() => setShowSetTimeCard(true)}>
           <View style={styles.timerWrapper}>
@@ -145,46 +199,83 @@ function Screen2() {
           {isTimerRunning ? "STOP" : "START DEEP WORK"}
         </PrimaryButton>
       </View>
+      {showConfetti && (
+  <ConfettiCannon
+    count={50}
+    origin={{ x: SCREEN_WIDTH / 2, y: 0 }}
+    fadeOut={true}
+    autoStart={true}
+    explosionSpeed={350}
+    fallSpeed={2500}
+    onAnimationEnd={() => setShowConfetti(false)}
+  />
+)}
     </GradientScreenWrapper>
   );
 }
 
-export default Screen2;
+export default DeepWorkScreen2;
 
 const styles = StyleSheet.create({
   swipeZone: {
-    
     width: SCREEN_WIDTH * 0.85,
-    height: SCREEN_HEIGHT < 900 ? (SCREEN_HEIGHT * 0.50) : (SCREEN_HEIGHT * 0.55) ,
+    height: SCREEN_HEIGHT < 900 ? (SCREEN_HEIGHT * 0.50) : (SCREEN_HEIGHT * 0.55),
     justifyContent: 'center',
     alignItems: 'center',
-    borderColor: '#000000',
+    borderColor: '#f60000',
     borderWidth: 1,
     alignSelf: "center",
     marginTop: 60,
-    
   },
   card: {
     position: 'absolute',
     width: SCREEN_WIDTH * 0.85,
-    height: SCREEN_HEIGHT < 900 ? (SCREEN_HEIGHT * 0.50) : (SCREEN_HEIGHT * 0.55) ,
+    height: SCREEN_HEIGHT < 900 ? (SCREEN_HEIGHT * 0.50) : (SCREEN_HEIGHT * 0.55),
     backgroundColor: '#FFF5E0',
     borderRadius: 16,
     justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
+    //alignItems: 'center',
+    padding: 10,
     shadowColor: '#000',
     shadowOpacity: 0.2,
     shadowRadius: 6,
     elevation: 4,
-     borderColor: '#000000',
+    borderColor: '#000000',
     borderWidth: 3,
   },
   cardText: {
-    fontSize: 20,
+    fontSize: 30,
     color: '#333',
     textAlign: 'center',
     marginBottom: 20,
+    fontWeight: "bold",
+    // borderColor: "#000000",
+    // borderWidth: 2,
+     
+  },
+  subgoalRow: {
+    
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginVertical: 5,
+  flexWrap: 'wrap',         // allow items to wrap within row
+  maxWidth: '100%',         // prevent it from overflowing
+
+    borderColor: "#000000",
+    borderWidth: 2,
+  },
+  subgoalText: {
+    subgoalText: {
+  fontSize: 16,
+  borderBottomWidth: 1,
+  borderColor: '#ccc',
+  flex: 1,                  // allows it to shrink inside the row
+  flexShrink: 1,            // allow shrinkage if content is long
+  padding: 4,
+  color: '#000',
+},
+    // borderColor: "#000000",
+    // borderWidth: 2,
   },
   iconRow: {
     flexDirection: 'row',
@@ -194,20 +285,22 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     position: "absolute",
     bottom: 10,
+    // borderColor: "#000000",
+    // borderWidth: 2,
   },
   iconButton: {
     padding: 10,
     backgroundColor: '#fff',
     borderRadius: 30,
     elevation: 3,
+    // borderColor: "#000000",
+    // borderWidth: 2,
   },
   timerWrapper: {
     position: 'absolute',
-    top: SCREEN_HEIGHT < 900 ? 10 : -10 ,
+    top: SCREEN_HEIGHT < 900 ? 10 : -10,
     alignItems: 'center',
     alignSelf: 'center',
-    // borderColor: '#000000',
-    // borderWidth: 3,
     flex: 1,
   },
   buttonWrapper: {
@@ -215,7 +308,6 @@ const styles = StyleSheet.create({
     bottom: 100,
     alignSelf: 'baseline',
     width: '100%',
-    
   },
   setTimeWrapper: {
     position: 'absolute',
@@ -224,6 +316,5 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     zIndex: 20,
     elevation: 10,
-    
   },
 });
