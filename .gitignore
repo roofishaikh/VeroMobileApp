@@ -8,6 +8,8 @@ node_modules/
 dist/
 web-build/
 expo-env.d.ts
+.cursor/mcp.jso
+
 
 # Native
 .kotlin/
