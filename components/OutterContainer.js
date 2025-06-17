@@ -18,13 +18,13 @@ const styles = StyleSheet.create({
     outterContainer: {
      flex: 1,
     padding: 10,    
-    marginTop: 50,
-    marginBottom: 140,
+    marginTop: 55,
+    marginBottom: 110,
     width: screenWidth < 390 ? 350 : 400 ,
     alignContent: "center",
     alignItems: "center",
-    borderColor: '#000000',
-    borderWidth: 3,
+    // borderColor: '#000000',
+    // borderWidth: 3,
     borderRadius: 15,
     alignSelf: "center",
     
