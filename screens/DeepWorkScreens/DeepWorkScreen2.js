@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ConfettiCannon from 'react-native-confetti-cannon';
 import { View, StyleSheet, Pressable, Text, Dimensions, TextInput,
-TouchableWithoutFeedback, Keyboard, ScrollView } from "react-native";
+TouchableWithoutFeedback, Keyboard, ScrollView, Alert } from "react-native";
 import PrimaryButton from "../../components/primaryButton";
 import Timer from "../../components/timer";
 import GradientScreenWrapper from "../../components/GradientScreenWrapper";
@@ -14,7 +14,7 @@ import Animated, {
   withSpring,
   runOnJS,
 } from "react-native-reanimated";
-import { Checkbox } from 'react-native-paper';
+import { Checkbox, IconButton } from 'react-native-paper';
 import { MaterialIcons } from "@expo/vector-icons";
 import { initialGoals } from "../../Data/goalsData";
 
@@ -96,18 +96,50 @@ function DeepWorkScreen2({ navigation }) {
     const [showConfetti, setShowConfetti] = useState(false);
 
   const toggleSubgoal = (goalIndex, subIndex) => {
-    const updated = [...goals];
-    updated[goalIndex].subgoals[subIndex].isCompleted = !updated[goalIndex].subgoals[subIndex].isCompleted;
-    setGoals(updated);
+    const updatedGoals = [...goals];
+    const wasCompleted = updatedGoals[goalIndex].subgoals[subIndex].isCompleted;
+    updatedGoals[goalIndex].subgoals[subIndex].isCompleted = !wasCompleted;
+    setGoals(updatedGoals);
 
-    // Trigger confetti only when marking as completed
-  if (updated[goalIndex].subgoals[subIndex].isCompleted) {
-    setShowConfetti(true);
-  }
-};
+    // Only trigger confetti when marking as completed (not when unchecking)
+    if (!wasCompleted) {
+      setShowConfetti(true);
+    }
+  };
   
 
+  const addSubgoal = (goalIndex) => {
+    const updatedGoals = [...goals];
+    const newSubgoal = {
+      id: Date.now(),
+      text: "New subgoal",
+      isCompleted: false
+    };
+    updatedGoals[goalIndex].subgoals.push(newSubgoal);
+    setGoals(updatedGoals);
+  };
 
+  const deleteSubgoal = (goalIndex, subIndex) => {
+    Alert.alert(
+      "Delete Subgoal",
+      "Are you sure you want to delete this subgoal?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => {
+            const updatedGoals = [...goals];
+            updatedGoals[goalIndex].subgoals.splice(subIndex, 1);
+            setGoals(updatedGoals);
+          }
+        }
+      ]
+    );
+  };
 
   return (
     <GradientScreenWrapper>
@@ -123,10 +155,10 @@ function DeepWorkScreen2({ navigation }) {
               <Animated.View style={[styles.card, isTop && animatedCardStyle]}>
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                   <ScrollView
-  style={{ flexGrow: 1 }}
-  contentContainerStyle={{ justifyContent: 'flex-start', paddingBottom: 20 }}
-  showsVerticalScrollIndicator={false}
->
+                    style={{ flexGrow: 1 }}
+                    contentContainerStyle={{ justifyContent: 'flex-start', paddingBottom: 20 }}
+                    showsVerticalScrollIndicator={false}
+                  >
                     <TextInput
                       style={styles.cardText}
                       multiline={true}
@@ -140,12 +172,17 @@ function DeepWorkScreen2({ navigation }) {
 
                     {goal.subgoals.map((sub, subIdx) => (
                       <View key={sub.id} style={styles.subgoalRow}>
-                        <Checkbox
-                          status={sub.isCompleted ? 'checked' : 'unchecked'}
+                        <Pressable 
                           onPress={() => toggleSubgoal(index, subIdx)}
-                          color="#4CAF50"
-                          uncheckedColor="#ccc"
-                        />
+                          style={styles.checkboxContainer}
+                        >
+                          <Checkbox
+                            status={sub.isCompleted ? 'checked' : 'unchecked'}
+                            color="#4CAF50"
+                            uncheckedColor="#ccc"
+                            style={styles.checkbox}
+                          />
+                        </Pressable>
                         <TextInput
                           value={sub.text}
                           onChangeText={(newText) => {
@@ -153,10 +190,27 @@ function DeepWorkScreen2({ navigation }) {
                             updatedGoals[index].subgoals[subIdx].text = newText;
                             setGoals(updatedGoals);
                           }}
-                          style={styles.subgoalText}
+                          style={[
+                            styles.subgoalText,
+                            sub.isCompleted && styles.completedSubgoalText
+                          ]}
+                        />
+                        <IconButton
+                          icon="delete"
+                          size={20}
+                          onPress={() => deleteSubgoal(index, subIdx)}
+                          style={styles.deleteSubgoalButton}
                         />
                       </View>
                     ))}
+                    
+                    <Pressable 
+                      onPress={() => addSubgoal(index)}
+                      style={styles.addSubgoalButton}
+                    >
+                      <MaterialIcons name="add-circle" size={24} color="#4CAF50" />
+                      <Text style={styles.addSubgoalText}>Add Subgoal</Text>
+                    </Pressable>
                   </ScrollView>
                 </TouchableWithoutFeedback>
                 <View style={styles.iconRow}>
@@ -200,16 +254,17 @@ function DeepWorkScreen2({ navigation }) {
         </PrimaryButton>
       </View>
       {showConfetti && (
-  <ConfettiCannon
-    count={50}
-    origin={{ x: SCREEN_WIDTH / 2, y: 0 }}
-    fadeOut={true}
-    autoStart={true}
-    explosionSpeed={350}
-    fallSpeed={2500}
-    onAnimationEnd={() => setShowConfetti(false)}
-  />
-)}
+        <ConfettiCannon
+          count={100}
+          origin={{ x: SCREEN_WIDTH / 2, y: 0 }}
+          fadeOut={true}
+          autoStart={true}
+          explosionSpeed={350}
+          fallSpeed={2500}
+          colors={['#4CAF50', '#2196F3', '#FFC107', '#F44336', '#9C27B0']}
+          onAnimationEnd={() => setShowConfetti(false)}
+        />
+      )}
     </GradientScreenWrapper>
   );
 }
@@ -254,28 +309,42 @@ const styles = StyleSheet.create({
      
   },
   subgoalRow: {
-    
-  flexDirection: 'row',
-  alignItems: 'center',
-  marginVertical: 5,
-  flexWrap: 'wrap',         // allow items to wrap within row
-  maxWidth: '100%',         // prevent it from overflowing
-
-    borderColor: "#000000",
-    borderWidth: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 5,
+    flexWrap: 'wrap',
+    maxWidth: '100%',
+    paddingHorizontal: 10,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  checkboxContainer: {
+    marginRight: 8,
+  },
+  checkbox: {
+    margin: 0,
+    padding: 0,
   },
   subgoalText: {
-    subgoalText: {
-  fontSize: 16,
-  borderBottomWidth: 1,
-  borderColor: '#ccc',
-  flex: 1,                  // allows it to shrink inside the row
-  flexShrink: 1,            // allow shrinkage if content is long
-  padding: 4,
-  color: '#000',
-},
-    // borderColor: "#000000",
-    // borderWidth: 2,
+    fontSize: 16,
+    borderBottomWidth: 1,
+    borderColor: '#ccc',
+    flex: 1,
+    flexShrink: 1,
+    padding: 4,
+    color: '#000',
+    marginRight: 8,
+  },
+  completedSubgoalText: {
+    textDecorationLine: 'line-through',
+    color: '#888',
+    borderBottomColor: '#888',
   },
   iconRow: {
     flexDirection: 'row',
@@ -316,5 +385,21 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     zIndex: 20,
     elevation: 10,
+  },
+  deleteSubgoalButton: {
+    margin: 0,
+    padding: 0,
+  },
+  addSubgoalButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    marginTop: 10,
+    alignSelf: 'center',
+  },
+  addSubgoalText: {
+    color: '#4CAF50',
+    marginLeft: 5,
+    fontSize: 16,
   },
 });

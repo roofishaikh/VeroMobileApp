@@ -1,0 +1,137 @@
+<context>
+
+### Overview
+The Focus tab in Vero will feature a stack of interactive goal cards. Each card represents a goal with multiple editable tasks (subgoals). Users can swipe cards left or right to cycle through their goals, edit or delete tasks, and mark tasks as complete. The UI provides clear visual feedback by showing a stack of small card icons on the left and right, representing the number of cards in each pile. The timer for each goal session will use a Time Timer / Duolingo-style circular countdown, providing an intuitive and engaging visual representation of time remaining.
+
+### Core Features
+- **Swipable Card Stack:** Users can swipe the top card left or right to move it to the left or right pile.
+- **Visual Left/Right Piles:**  
+  - Cards swiped left are shown as a stack of small rectangular icons on the left.
+  - Cards swiped right are shown as a stack of small rectangular icons on the right.
+  - The number of icons reflects the number of cards in each pile.
+- **Central Card Display:** The current (active) card is displayed in the center, full size, showing the goal and its tasks.
+- **Editable Goal Cards:** Each card contains a title and a list of tasks (subgoals) that can be edited or deleted.
+- **Task Completion:** Users can check off tasks; confetti is shown for positive reinforcement.
+- **Add/Delete Cards:** Users can add new goal cards or delete the current card.
+- **Time Timer-Style Countdown:**  
+  - The timer is visualized as a circular countdown (like Time Timer or Duolingo).
+  - A colored arc or segment animates smoothly around the circle, shrinking as time elapses.
+  - Remaining time may be shown as text in the center, but the main feedback is the visual arc.
+  - The timer is engaging, intuitive, and provides clear feedback on time remaining for the session.
+
+### User Experience
+- **User Personas:**  
+  - Productive Professional: Wants to manage and focus on daily goals.
+  - Student: Tracks study tasks and marks them as complete.
+  - Habit Builder: Uses cards to reinforce daily routines.
+- **Key User Flows:**  
+  1. User opens Focus tab and sees the top goal card in the center.
+  2. User swipes left/right to move the card to the left/right pile.
+  3. The left and right piles are visualized as stacks of small card icons, showing how many cards are in each pile.
+  4. User edits the card title or tasks, adds/deletes tasks.
+  5. User checks off a task (confetti appears).
+  6. User deletes a card or adds a new one.
+  7. User starts a timer for a goal session, and sees a circular countdown arc that visually shrinks as time passes.
+- **UI/UX Considerations:**  
+  - Smooth card swipe animation (using Reanimated + Gesture Handler).
+  - Animated transition of cards to left/right piles.
+  - Small card icons on left/right for visual feedback.
+  - Editable TextInput for card title and tasks.
+  - Clear affordances for add/delete actions.
+  - Responsive layout for different devices.
+  - Visual feedback (confetti, checkboxes, etc.).
+  - Circular Time Timer-style countdown for sessions.
+
+</context>
+
+<PRD>
+
+### Technical Architecture
+
+- **System Components:**
+  - `DeepWorkScreen2`: Main screen for Focus tab, renders the card stack, left/right piles, and timer.
+  - `GoalCard`: Component for individual cards (title, subgoals, edit/delete).
+  - `TimeTimer`: Circular countdown timer component (using `react-native-svg` and `Animated`).
+  - `SetTime`: Component for setting timer duration.
+  - `ConfettiCannon`: For celebratory feedback.
+  - Data: `initialGoals` array for card state.
+
+- **Data Models:**
+  ```js
+  // Example goal card structure
+  {
+    id: 1,
+    text: "Goal Title",
+    subgoals: [
+      { id: 1, text: "Task 1", isCompleted: false },
+      { id: 2, text: "Task 2", isCompleted: true }
+    ]
+  }
+  // State:
+  {
+    leftPile: [/* cards swiped left */],
+    centerCard: {/* current card */},
+    rightPile: [/* cards swiped right */]
+  }
+  ```
+
+- **APIs and Integrations:**
+  - Local state management (useState).
+  - No backend for MVP; future: sync with cloud storage.
+
+- **Infrastructure Requirements:**
+  - React Native (Expo)
+  - `react-native-reanimated`, `react-native-gesture-handler`
+  - `react-native-paper` (Checkbox)
+  - `react-native-confetti-cannon`
+  - `react-native-svg` (for circular timer)
+
+### Development Roadmap
+
+- **MVP Requirements:**
+  - Swipable stack of cards (left/right).
+  - Visual left/right piles as small card icons.
+  - Editable card title and subgoals.
+  - Add/delete cards and subgoals.
+  - Mark subgoals as complete (with confetti).
+  - **Time Timer-style circular countdown for sessions.**
+
+- **Future Enhancements:**
+  - Persist cards to local storage or backend.
+  - Analytics on completed goals/tasks.
+  - Customizable card colors/themes.
+  - Drag-and-drop reordering of cards.
+  - Tap left/right piles to bring cards back to center.
+  - Share/export goals.
+
+### Logical Dependency Chain
+
+1. Card stack/swipe logic (Reanimated + Gesture Handler)
+2. Visual left/right piles (icon stack rendering)
+3. Card editing (title, subgoals)
+4. Add/delete card functionality
+5. Subgoal completion logic (checkbox, confetti)
+6. **Time Timer-style circular countdown**
+7. UI polish and responsive layout
+
+### Risks and Mitigations
+
+- **Gesture Conflicts:**  
+  Use dedicated gesture handler for card stack to avoid conflicts with scroll/tap.
+- **State Consistency:**  
+  Carefully manage state updates for editing, adding, deleting cards/tasks, and moving cards between piles.
+- **Performance:**  
+  Optimize rendering for large numbers of cards and smooth animations.
+- **Timer Animation:**  
+  Use performant libraries (`react-native-svg`, `Animated`) for smooth, battery-efficient circular timer.
+
+### Appendix
+
+- **Animation Reference:**  
+  - [React Native Reanimated Docs](https://docs.swmansion.com/react-native-reanimated/)
+  - [Gesture Handler Docs](https://docs.swmansion.com/react-native-gesture-handler/)
+  - [react-native-svg](https://github.com/software-mansion/react-native-svg)
+- **Inspiration:**  
+  - Time Timer app, Duolingo lesson timer, Tinder card stack, Habitica, Trello
+
+</PRD> 
