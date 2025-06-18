@@ -18,94 +18,95 @@
           "dependencies": []
         },
         {
-          "name": "Create Edit Modal",
-          "description": "Implement a proper modal for editing card title and subgoals",
-          "status": "pending",
+          "name": "Implement In-Card Editing",
+          "description": "Implement editing functionality directly on the card when tapped, allowing users to edit card title and subgoals inline without opening a separate modal",
+          "status": "done",
           "priority": "high",
           "dependencies": ["Add Subgoal Management"]
         },
         {
           "name": "Add Input Validation",
           "description": "Add validation for empty or duplicate subgoals",
-          "status": "pending",
+          "status": "done",
           "priority": "medium",
-          "dependencies": ["Add Subgoal Management", "Create Edit Modal"]
-        },
-        {
-          "name": "Implement Edit History",
-          "description": "Add undo/redo functionality for card edits",
-          "status": "pending",
-          "priority": "low",
-          "dependencies": ["Add Subgoal Management", "Create Edit Modal"]
+          "dependencies": ["Add Subgoal Management", "Implement In-Card Editing"]
         },
         {
           "name": "Add Edit Persistence",
           "description": "Implement local storage to persist card edits between sessions",
-          "status": "pending",
+          "status": "done",
           "priority": "medium",
-          "dependencies": ["Add Subgoal Management", "Create Edit Modal"]
+          "dependencies": ["Add Subgoal Management", "Implement In-Card Editing"]
         },
         {
           "name": "Task Completion Sound Effects",
           "description": "Add sound effects when completing tasks, including:\n- Success sound when marking a task as complete\n- Different sound when unchecking a task\n- Volume control for sound effects\n- Option to disable sounds in settings",
-          "status": "not_started",
+          "status": "cancelled",
           "priority": "low",
           "dependencies": ["Add Subgoal Management"],
-          "notes": "Will be implemented after core functionality is complete"
+          "notes": "Removed due to technical issues and complexity. Core functionality works without audio effects."
         }
       ]
     },
     {
       "name": "Visual Left/Right Piles",
       "description": "Implement the visual representation of card piles on left and right sides",
-      "status": "pending",
+      "status": "done",
       "priority": "medium",
       "subtasks": [
         {
           "name": "Create Pile Icons",
           "description": "Design and implement small card icons for left/right piles",
-          "status": "pending",
-          "priority": "medium"
+          "status": "done",
+          "priority": "medium",
+          "notes": "Implemented using MaterialIcons 'layers' with green color for left pile and blue for right pile"
         },
         {
           "name": "Implement Pile Counter",
           "description": "Add visual counter showing number of cards in each pile",
-          "status": "pending",
-          "priority": "medium"
+          "status": "done",
+          "priority": "medium",
+          "notes": "Real-time counters showing number of cards in each pile with animated updates"
         },
         {
           "name": "Add Pile Animations",
           "description": "Implement smooth animations when cards move to piles",
-          "status": "pending",
-          "priority": "medium"
+          "status": "done",
+          "priority": "medium",
+          "notes": "Smooth scale animations using react-native-reanimated when cards are added to piles"
         }
-      ]
+      ],
+      "notes": "Successfully implemented visual piles with icons, counters, and animations. Added fallback handling to prevent deletion/swiping of last card and empty state management."
     },
     {
       "name": "Time Timer Implementation",
       "description": "Create the circular countdown timer component with Time Timer/Duolingo style",
-      "status": "pending",
+      "status": "done",
       "priority": "low",
       "subtasks": [
         {
           "name": "Create Circular Timer UI",
           "description": "Implement the Time Timer-style circular countdown using react-native-svg",
-          "status": "pending",
-          "priority": "low"
+          "status": "done",
+          "priority": "low",
+          "notes": "Enhanced circular timer with dynamic colors (green/orange/red based on progress), center dot, and improved visual design"
         },
         {
           "name": "Add Timer Animation",
           "description": "Create smooth animation for the countdown arc that shrinks as time passes",
-          "status": "pending",
-          "priority": "low"
+          "status": "done",
+          "priority": "low",
+          "notes": "Implemented smooth progress animations, pulse effects when running, and completion animations with scale effects"
         },
         {
           "name": "Implement Timer Controls",
           "description": "Add intuitive controls for starting, pausing, and resetting the timer",
-          "status": "pending",
-          "priority": "low"
+          "status": "done",
+          "priority": "low",
+          "notes": "Added pause/resume and reset controls with tap-to-show interface. Enhanced SetTimer with quick presets (25, 45, 60 min) and better UX"
         }
-      ]
+      ],
+      "notes": "Successfully implemented sophisticated Time Timer with dynamic colors, smooth animations, intuitive controls, and enhanced timer selection interface with quick presets."
     }
   ],
   "dependencies": [],
