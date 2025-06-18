@@ -59,5 +59,9 @@ dev-debug.log
 *.sw?
 # OS specific
 # Task files
-tasks.json
-tasks/ 
+# removed: tasks.json
+# removed: tasks/
+
+# Task files
+# removed: tasks.json
+# removed: tasks/ 
