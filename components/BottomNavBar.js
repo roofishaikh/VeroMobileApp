@@ -8,21 +8,32 @@ import Focus from '../assets/icons/focus.svg';
 import Checkin from '../assets/icons/checkin.svg';
 import Reflect from '../assets/icons/reflect.svg';
 import Insights from '../assets/icons/insights.svg';
-import Screen2 from '../screens/DeepWorkScreens/DeepWorkScreen2';
-
-
 
 function BottomNavBar() {
-  const navigation = useNavigation() ;
+  const navigation = useNavigation();
 
   const navItems = [
-  {  icon: Plan, onPress: () => navigation.navigate('deepWorkScreen1') }, //implement react-navigation - screen2
-  {  icon: Focus, onPress: () => navigation.navigate('deepWorkScreen1') },
-  {  icon: Checkin, onPress: () => navigation.navigate('Check-In') },
-  {  icon: Reflect, onPress: () => navigation.navigate('deepWorkScreen1') },
-  {  icon: Insights, onPress: () => navigation.navigate('Insights') },
-];
-
+    { 
+      icon: Plan, 
+      onPress: () => navigation.navigate('Plan')
+    },
+    { 
+      icon: Focus, 
+      onPress: () => navigation.navigate('Focus')
+    },
+    { 
+      icon: Checkin, 
+      onPress: () => navigation.navigate('Check-In')
+    },
+    { 
+      icon: Reflect, 
+      onPress: () => navigation.navigate('Reflect')
+    },
+    { 
+      icon: Insights, 
+      onPress: () => navigation.navigate('Insights')
+    },
+  ];
 
   return (
     <View style={styles.bottomBar}>
@@ -32,7 +43,6 @@ function BottomNavBar() {
           <Pressable key={index} onPress={item.onPress}>
             <View style={styles.navItem}>
               <IconComponent width={75} height={75} />
-             
             </View>
           </Pressable>
         );

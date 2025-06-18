@@ -1,0 +1,176 @@
+{
+  "name": "Implement Plan Feature",
+  "description": "Replace DeepWorkScreen1 with a new Plan feature in the bottom navigation bar, implementing a modal with various planning options",
+  "priority": "high",
+  "status": "in_progress",
+  "subtasks": [
+    {
+      "name": "Navigation Update",
+      "description": "Update navigation to show modal instead of DeepWorkScreen1 when Plan icon is tapped",
+      "status": "completed",
+      "priority": "high",
+      "subtasks": [
+        {
+          "name": "Update Navigation Logic",
+          "description": "Modify navigation to show modal instead of DeepWorkScreen1 when Plan icon is tapped",
+          "status": "completed",
+          "priority": "high"
+        },
+        {
+          "name": "Verify Plan Icon",
+          "description": "Ensure existing plan.svg from assets is properly used in navigation",
+          "status": "completed",
+          "priority": "high"
+        }
+      ]
+    },
+    {
+      "name": "Plan Modal Implementation",
+      "description": "Create the main modal component with planning options",
+      "status": "completed",
+      "priority": "high",
+      "subtasks": [
+        {
+          "name": "Create Modal Component",
+          "description": "Implement the base modal component with proper animations and gestures",
+          "status": "completed",
+          "priority": "high"
+        },
+        {
+          "name": "Design Grid Layout",
+          "description": "Implement the grid layout for planning options",
+          "status": "completed",
+          "priority": "high"
+        },
+        {
+          "name": "Create Option Components",
+          "description": "Implement individual option components with icons and descriptions",
+          "status": "completed",
+          "priority": "high"
+        }
+      ]
+    },
+    {
+      "name": "Rise and Shine Implementation",
+      "description": "Implement the Rise and Shine feature using existing DeepWorkScreen1 functionality",
+      "status": "not_started",
+      "priority": "high",
+      "subtasks": [
+        {
+          "name": "Reuse Existing Prompts",
+          "description": "Use existing prompts from DeepWorkScreen1",
+          "status": "not_started",
+          "priority": "high"
+        },
+        {
+          "name": "Timer Integration",
+          "description": "Integrate existing timer functionality",
+          "status": "not_started",
+          "priority": "high"
+        },
+        {
+          "name": "UI Styling",
+          "description": "Apply warm, energizing color scheme",
+          "status": "not_started",
+          "priority": "medium"
+        }
+      ]
+    },
+    {
+      "name": "Shutdown Implementation",
+      "description": "Implement the Shutdown feature with evening reflection prompts",
+      "status": "not_started",
+      "priority": "high",
+      "subtasks": [
+        {
+          "name": "Create Evening Prompts",
+          "description": "Implement the four evening reflection prompts",
+          "status": "not_started",
+          "priority": "high"
+        },
+        {
+          "name": "Timer Integration",
+          "description": "Integrate timer functionality similar to Rise and Shine",
+          "status": "not_started",
+          "priority": "high"
+        },
+        {
+          "name": "UI Styling",
+          "description": "Apply cool, calming color scheme",
+          "status": "not_started",
+          "priority": "medium"
+        }
+      ]
+    },
+    {
+      "name": "Placeholder Features",
+      "description": "Implement placeholder cards for Weekly and Monthly Review",
+      "status": "completed",
+      "priority": "medium",
+      "subtasks": [
+        {
+          "name": "Weekly Review Placeholder",
+          "description": "Create placeholder card with 'Coming Soon' message",
+          "status": "completed",
+          "priority": "medium"
+        },
+        {
+          "name": "Monthly Review Placeholder",
+          "description": "Create placeholder card with 'Coming Soon' message",
+          "status": "completed",
+          "priority": "medium"
+        }
+      ]
+    },
+    {
+      "name": "State Management",
+      "description": "Implement state management for planning features",
+      "status": "not_started",
+      "priority": "high",
+      "subtasks": [
+        {
+          "name": "Session Tracking",
+          "description": "Implement tracking of completed planning sessions",
+          "status": "not_started",
+          "priority": "high"
+        },
+        {
+          "name": "User Preferences",
+          "description": "Implement storage of user preferences",
+          "status": "not_started",
+          "priority": "medium"
+        }
+      ]
+    },
+    {
+      "name": "UI/UX Enhancements",
+      "description": "Implement visual and interaction enhancements",
+      "status": "not_started",
+      "priority": "medium",
+      "subtasks": [
+        {
+          "name": "Animations",
+          "description": "Implement smooth animations for modal and interactions",
+          "status": "not_started",
+          "priority": "medium"
+        },
+        {
+          "name": "Haptic Feedback",
+          "description": "Add haptic feedback for interactions",
+          "status": "not_started",
+          "priority": "low"
+        },
+        {
+          "name": "Accessibility",
+          "description": "Implement accessibility features",
+          "status": "not_started",
+          "priority": "medium"
+        }
+      ]
+    }
+  ],
+  "dependencies": [],
+  "tags": ["feature", "planning", "ui", "modal"],
+  "createdAt": "2024-03-21T00:00:00Z",
+  "updatedAt": "2024-03-21T00:00:00Z"
+} 

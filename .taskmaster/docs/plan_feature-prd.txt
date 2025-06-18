@@ -1,0 +1,158 @@
+**Vero PRD – Plan to Rise and Shine Ritual**
+
+<context>
+
+# Overview
+
+The “Plan to Rise and Shine” feature in the Vero app is a guided morning ritual designed to help users start their day with intention, focus, and mindfulness. It incorporates a visual countdown timer and a series of reflective prompts. The feature is aimed at users who want to cultivate daily habits, improve mental clarity, and build consistent streaks of mindful behavior. Its value lies in enabling self-regulation and habit reinforcement through a structured, yet frictionless experience.
+
+# Core Features
+
+## 1. Time Timer Style Countdown
+
+* **What it does**: Displays a circular countdown timer (like Time Timer) for a 5-minute ritual session.
+* **Why it's important**: Anchors user attention and creates a boundary for mental focus.
+* **How it works**: Tapping the timer starts a smooth red arc countdown; completes in 5 minutes.
+
+## 2. Reflection Question Card
+
+* **What it does**: Shows four fixed reflection questions.
+* **Why it's important**: Promotes introspection and primes the mind for focus.
+* **How it works**: Static card UI visible throughout the timer session.
+
+## 3. Complete Ritual Button
+
+* **What it does**: Allows user to complete the session only after timer finishes.
+* **Why it's important**: Prevents premature exits, ensures full engagement.
+* **How it works**: Button remains disabled until countdown reaches zero.
+
+## 4. Streak Tracking (Local)
+
+* **What it does**: Tracks ritual completion and maintains a streak count.
+* **Why it's important**: Builds long-term habit and provides motivational reinforcement.
+* **How it works**: Ritual status and date stored in local device storage (AsyncStorage).
+
+# User Experience
+
+## User Personas
+
+* **Focused Founder**: Needs mental clarity before a deep work session.
+* **Mindful Maker**: Uses rituals to stay emotionally grounded.
+* **Busy Parent**: Values a structured moment of pause and reflection.
+
+## Key User Flows
+
+1. User opens Vero and navigates to “Plan” tab.
+2. User sees “plan to rise and shine” title and FOCUS timer.
+3. User taps the timer → countdown begins.
+4. Questions are shown → user reflects.
+5. After 5 minutes → haptic feedback.
+6. “COMPLETE RITUAL” button is enabled → user taps to proceed.
+7. Ritual completion is stored → streak updated.
+8. User is navigated to `deepWorkScreen2`.
+
+## UI/UX Considerations
+
+* Smooth animation of timer arc.
+* Clear visual separation of timer and questions.
+* Responsive layout for various screen sizes.
+* Haptic feedback to mark transition moments.
+* Disabled button state conveys constraint clearly.
+
+</context>
+
+<PRD>
+
+# Technical Architecture
+
+## System Components
+
+* `Screen1.js`: Ritual screen
+* `FocusTimer`: Countdown component (custom)
+* `Screen1QuestionsCard`: Questions UI
+* `PrimaryButton`: CTA component
+* `StreakManager`: Local storage logic
+
+## Data Models
+
+```json
+{
+  "ritualHistory": [
+    {
+      "date": "2025-06-14",
+      "duration": 300,
+      "completed": true
+    }
+  ],
+  "streak": {
+    "current": 4,
+    "longest": 7,
+    "lastDate": "2025-06-14"
+  }
+}
+```
+
+## APIs and Integrations
+
+* Local only for MVP (uses `AsyncStorage`)
+* Future: backend sync via Firebase or MongoDB
+
+## Infrastructure Requirements
+
+* No backend required for initial MVP
+* Expo-compatible libraries only (e.g. `react-native-svg`, `expo-haptics`)
+
+# Development Roadmap
+
+## MVP Requirements
+
+* Display title and layout
+* Build tappable Time Timer
+* Display reflection questions
+* Complete button (disabled → enabled on timer finish)
+* Local tracking of ritual completion and streaks
+
+## Future Enhancements
+
+* Configurable timer duration
+* Guided audio ritual voiceover
+* Ritual history log (visual calendar)
+* Motivation badges for streak milestones
+* Backend sync and analytics
+
+# Logical Dependency Chain
+
+1. Layout Skeleton (UI + screen rendering)
+2. FocusTimer component (core visual interaction)
+3. Reflection Questions card
+4. Ritual logic (start, complete, store)
+5. StreakManager local storage
+6. Navigation to `deepWorkScreen2`
+7. MVP complete (visible and interactive front-end)
+8. Future layers: badge system, audio, analytics
+
+# Risks and Mitigations
+
+## Technical Challenges
+
+* Smooth timer animation performance → mitigate using SVG + `Animated.timing`
+* Accurate time tracking → store timestamps to avoid false positives
+
+## MVP Clarity
+
+* Define ritual as “complete” only after full timer → enforced via disabled state
+* Avoid over-scoping streak logic in first release
+
+## Resource Constraints
+
+* Local-only MVP avoids backend complexity
+* All components use Expo SDK for faster iteration
+
+# Appendix
+
+* SVG Arc Reference: `react-native-svg`
+* Inspiration: Time Timer, Duolingo streaks
+* Haptics: `expo-haptics`
+* UX principle: Rituals as anchors for state change
+
+</PRD>

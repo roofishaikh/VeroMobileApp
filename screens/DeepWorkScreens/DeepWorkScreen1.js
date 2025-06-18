@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -12,23 +12,31 @@ import GradientScreenWrapper from "../../components/GradientScreenWrapper";
 import SetTime from "../../components/SetTimer";
 import Screen1QuestiosCard from "../../components/Screen1QuestiosCard";
 
-
-
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
- function DeepWorkScreen1({navigation}) {
+function DeepWorkScreen1({ navigation }) {
   const [duration, setDuration] = useState(5 * 60);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [showStopwatchCard, setShowStopwatchCard] = useState(false);
   const [showSetTimeCard, setShowSetTimeCard] = useState(false);
 
+  useEffect(() => {
+    console.log('DeepWorkScreen1 mounted');
+  }, []);
+
   const handleStartStop = () => {
-    if (!isTimerRunning) setShowStopwatchCard(false);
+    if (!isTimerRunning) {
+      console.log('Starting timer');
+      setShowStopwatchCard(false);
+    } else {
+      console.log('Stopping timer and navigating to DeepScreen2');
+      navigation.navigate('DeepScreen2');
+    }
     setIsTimerRunning((prev) => !prev);
-    if (isTimerRunning) navigation.navigate('DeepScreen2')
   };
 
   const handleTimeSet = (min) => {
+    console.log('Setting time to:', min, 'minutes');
     setDuration(min * 60);
     setShowSetTimeCard(false);
   };
@@ -40,12 +48,19 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
         {/* Tapable Timer */}
         {!showStopwatchCard && !showSetTimeCard && (
-          <TouchableOpacity onPress={() => setShowSetTimeCard(true)} activeOpacity={0.8}
-           style={styles.timerWrapper}>
+          <TouchableOpacity 
+            onPress={() => {
+              console.log('Timer pressed, showing time options');
+              setShowSetTimeCard(true);
+            }} 
+            activeOpacity={0.8}
+            style={styles.timerWrapper}
+          >
             <Timer
               duration={duration}
               isRunning={isTimerRunning}
               onComplete={() => {
+                console.log('Timer completed');
                 setIsTimerRunning(false);
                 setShowStopwatchCard(true);
               }}
@@ -82,9 +97,6 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
   );
 }
 
-export default DeepWorkScreen1;
-
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -94,11 +106,9 @@ const styles = StyleSheet.create({
   },
   timerWrapper: {
     position: 'absolute',
-    top: SCREEN_HEIGHT < 900 ? 500 : 565 ,
+    top: SCREEN_HEIGHT < 900 ? 500 : 565,
     alignItems: 'center',
     alignSelf: 'center',
-    // borderColor: '#000000',
-    // borderWidth: 3,
     flex: 1,
   },
   buttonWrapper: {
@@ -130,3 +140,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 });
+
+export default DeepWorkScreen1;
+
+

@@ -1,0 +1,22 @@
+{
+  "name": "Example Task",
+  "description": "This is an example task definition",
+  "priority": "medium",
+  "status": "pending",
+  "subtasks": [
+    {
+      "name": "Subtask 1",
+      "description": "First subtask description",
+      "status": "pending"
+    },
+    {
+      "name": "Subtask 2",
+      "description": "Second subtask description",
+      "status": "pending"
+    }
+  ],
+  "dependencies": [],
+  "tags": ["example", "template"],
+  "createdAt": "2024-03-21T00:00:00Z",
+  "updatedAt": "2024-03-21T00:00:00Z"
+} 

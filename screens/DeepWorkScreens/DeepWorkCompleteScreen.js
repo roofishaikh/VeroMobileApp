@@ -5,64 +5,47 @@ import FocusCard from "../../components/FocusCard";
 import Screen1QuesionsCard from "../../components/Screen1QuestiosCard";
 import React from "react";
 
-
-
-export default function DeepWorkComplete() {
-
+export default function DeepWorkCompleteScreen() {
     return(
         <View style={styles.outterContainer}>
-             
-                        
+            <View style={styles.OptionsCard}>
+                <View style={styles.title}>
+                    <Text style={styles.titleText}>Deep Work</Text>
+                </View>
 
-             <View style={styles.OptionsCard}>
-                
-                    <View style={styles.title}>
-                         <Text style={styles.titleText}>Deep Work</Text>
-                    </View>
-
-                     <View style={styles.resultCard}>
-
-                       <View style={styles.GoalsCompletedChecklist}>
-                    <Image source={require('../../assets/icons/VeroListening.png')}
-                        style={{height: 80, width: 80, alignSelf: "flex-end"}}  />
+                <View style={styles.resultCard}>
+                    <View style={styles.GoalsCompletedChecklist}>
+                        <Image source={require('../../assets/icons/VeroListening.png')}
+                            style={{height: 80, width: 80, alignSelf: "flex-end"}}  />
                         <Text> Goal: from goalscard</Text>
                     </View>
                     
-                        <View style={styles.DeepWorkSummaryContainer}>
-                          <Text style={{fontWeight: "bold", textAlign: "center", color: 'turquoise'
-                          }}>
+                    <View style={styles.DeepWorkSummaryContainer}>
+                        <Text style={{fontWeight: "bold", textAlign: "center", color: 'turquoise'}}>
                             Task completed in 22 mins! Well done.
-                          </Text>
-                          <Text style={{textAlign: "center", color:'blue' }}>Momentum is building</Text>
-                          <Text >Goals from goalscard with checkbox</Text>
-                       </View>
+                        </Text>
+                        <Text style={{textAlign: "center", color:'blue' }}>Momentum is building</Text>
+                        <Text>Goals from goalscard with checkbox</Text>
                     </View>
+                </View>
             </View>
-                   
-                    
-                
             
-             
-                    
             <View style={styles.TimerContainer}>
-              <View style={styles.pauseButton}>
-                <Text style={styles.controlText}>Pause</Text>
-              </View>
+                <View style={styles.pauseButton}>
+                    <Text style={styles.controlText}>Pause</Text>
+                </View>
 
-              <View style={styles.OutterTimer} >
+                <View style={styles.OutterTimer}>
                     <View style={styles.InnerTimer}>
-
                     </View>
-              </View>
+                </View>
 
-              <View style={styles.endButton}>
-                <Text style={styles.controlText}>End</Text>
-              </View>
+                <View style={styles.endButton}>
+                    <Text style={styles.controlText}>End</Text>
+                </View>
             </View>
-             
-             
         </View>
-    ) ;
+    );
 }
 
 const styles = StyleSheet.create({

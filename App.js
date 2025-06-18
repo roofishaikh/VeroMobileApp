@@ -14,6 +14,7 @@ import DeepWorkScreen2 from './screens/DeepWorkScreens/DeepWorkScreen2';
 import CheckInScreen1 from './screens/CheckInScreens/CheckInScreen1';
 import DeepWorkSummary from './screens/DeepWorkScreens/DeepWorkSummary';
 import HabitTracker from './screens/InsightsScreens/HabitTracker';
+import DeepWorkCompleteScreen from './screens/DeepWorkScreens/DeepWorkCompleteScreen';
 
 // Icons
 import Plan from './assets/icons/plan.svg';
@@ -89,7 +90,10 @@ export default function App() {
           <NavigationContainer>
             <Stack.Navigator screenOptions={{ headerShown: false }}>
               <Stack.Screen name="HomeTabs" component={BottomTabs} />
-              <Stack.Screen name="deepWorkScreen2" component={DeepWorkScreen2} />
+              <Stack.Screen name="DeepScreen1" component={DeepWorkScreen1} />
+              <Stack.Screen name="DeepScreen2" component={DeepWorkScreen2} />
+              <Stack.Screen name="DeepWorkScreen3" component={DeepWorkCompleteScreen} />
+              <Stack.Screen name="DeepWorkScreen4" component={DeepWorkSummary} />
             </Stack.Navigator>
           </NavigationContainer>
         </LinearGradient>

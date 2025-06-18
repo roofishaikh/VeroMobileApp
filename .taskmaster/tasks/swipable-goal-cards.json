@@ -1,0 +1,115 @@
+{
+  "name": "Implement Swipable Goal Cards in Focus Tab",
+  "description": "Develop the Focus tab feature with interactive goal cards, swipe functionality, and Time Timer-style countdown",
+  "priority": "high",
+  "status": "in_progress",
+  "subtasks": [
+    {
+      "name": "Complete Card Editing Features",
+      "description": "Implement comprehensive card editing functionality",
+      "status": "in_progress",
+      "priority": "high",
+      "subtasks": [
+        {
+          "name": "Add Subgoal Management",
+          "description": "Implement add/delete functionality for individual subgoals",
+          "status": "in_progress",
+          "priority": "highest",
+          "dependencies": []
+        },
+        {
+          "name": "Create Edit Modal",
+          "description": "Implement a proper modal for editing card title and subgoals",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": ["Add Subgoal Management"]
+        },
+        {
+          "name": "Add Input Validation",
+          "description": "Add validation for empty or duplicate subgoals",
+          "status": "pending",
+          "priority": "medium",
+          "dependencies": ["Add Subgoal Management", "Create Edit Modal"]
+        },
+        {
+          "name": "Implement Edit History",
+          "description": "Add undo/redo functionality for card edits",
+          "status": "pending",
+          "priority": "low",
+          "dependencies": ["Add Subgoal Management", "Create Edit Modal"]
+        },
+        {
+          "name": "Add Edit Persistence",
+          "description": "Implement local storage to persist card edits between sessions",
+          "status": "pending",
+          "priority": "medium",
+          "dependencies": ["Add Subgoal Management", "Create Edit Modal"]
+        },
+        {
+          "name": "Task Completion Sound Effects",
+          "description": "Add sound effects when completing tasks, including:\n- Success sound when marking a task as complete\n- Different sound when unchecking a task\n- Volume control for sound effects\n- Option to disable sounds in settings",
+          "status": "not_started",
+          "priority": "low",
+          "dependencies": ["Add Subgoal Management"],
+          "notes": "Will be implemented after core functionality is complete"
+        }
+      ]
+    },
+    {
+      "name": "Visual Left/Right Piles",
+      "description": "Implement the visual representation of card piles on left and right sides",
+      "status": "pending",
+      "priority": "medium",
+      "subtasks": [
+        {
+          "name": "Create Pile Icons",
+          "description": "Design and implement small card icons for left/right piles",
+          "status": "pending",
+          "priority": "medium"
+        },
+        {
+          "name": "Implement Pile Counter",
+          "description": "Add visual counter showing number of cards in each pile",
+          "status": "pending",
+          "priority": "medium"
+        },
+        {
+          "name": "Add Pile Animations",
+          "description": "Implement smooth animations when cards move to piles",
+          "status": "pending",
+          "priority": "medium"
+        }
+      ]
+    },
+    {
+      "name": "Time Timer Implementation",
+      "description": "Create the circular countdown timer component with Time Timer/Duolingo style",
+      "status": "pending",
+      "priority": "low",
+      "subtasks": [
+        {
+          "name": "Create Circular Timer UI",
+          "description": "Implement the Time Timer-style circular countdown using react-native-svg",
+          "status": "pending",
+          "priority": "low"
+        },
+        {
+          "name": "Add Timer Animation",
+          "description": "Create smooth animation for the countdown arc that shrinks as time passes",
+          "status": "pending",
+          "priority": "low"
+        },
+        {
+          "name": "Implement Timer Controls",
+          "description": "Add intuitive controls for starting, pausing, and resetting the timer",
+          "status": "pending",
+          "priority": "low"
+        }
+      ]
+    }
+  ],
+  "dependencies": [],
+  "tags": ["feature", "focus-tab", "ui", "animation"],
+  "createdAt": "2024-03-21T00:00:00Z",
+  "updatedAt": "2024-03-21T00:00:00Z"
+} 
