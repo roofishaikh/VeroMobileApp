@@ -1,0 +1,182 @@
+{
+  "name": "Plan Feature & Morning/Evening Rituals",
+  "description": "Implement the unified planning hub with Rise and Shine, Shutdown, Weekly/Monthly Review, streak tracking, and all UI/UX, technical, and roadmap details as per PRD.",
+  "priority": "highest",
+  "status": "pending",
+  "subtasks": [
+    {
+      "name": "Overview & Core Features",
+      "description": "Document overall goal, modal structure, and centralization of rituals as per PRD.",
+      "priority": "high",
+      "status": "pending"
+    },
+    {
+      "name": "Plan Modal Implementation",
+      "description": "Create PlanModal with 2x2 grid, PlanOptionCards, navigation, accessibility, color cues, and disabled placeholders.",
+      "priority": "highest",
+      "status": "pending",
+      "subtasks": [
+        { "name": "Create PlanModal component", "description": "React-Native Modal with 2x2 grid of PlanOptionCards.", "priority": "high", "status": "pending" },
+        {
+          "name": "Implement PlanOptionCards",
+          "description": "Rise and Shine, Shutdown, Weekly Review (disabled), Monthly Review (disabled) with correct icons and micro-copy. Each card includes its prompts or placeholder.",
+          "priority": "high",
+          "status": "pending",
+          "subtasks": [
+            {
+              "name": "Rise and Shine Prompts",
+              "description": "Prompts for the morning ritual.",
+              "priority": "high",
+              "status": "pending",
+              "subtasks": [
+                { "name": "Prompt 1", "description": "What am I grateful for today?", "priority": "high", "status": "pending" },
+                { "name": "Prompt 2", "description": "What am I avoiding?", "priority": "high", "status": "pending" },
+                { "name": "Prompt 3", "description": "What am I excited about today?", "priority": "high", "status": "pending" },
+                { "name": "Prompt 4", "description": "What is one thing I must accomplish today?", "priority": "high", "status": "pending" }
+              ]
+            },
+            {
+              "name": "Shutdown Prompts",
+              "description": "Prompts for the evening ritual.",
+              "priority": "high",
+              "status": "pending",
+              "subtasks": [
+                { "name": "Prompt 1", "description": "What am I grateful for today?", "priority": "high", "status": "pending" },
+                { "name": "Prompt 2", "description": "How can I improve?", "priority": "high", "status": "pending" },
+                { "name": "Prompt 3", "description": "What did I learn today?", "priority": "high", "status": "pending" },
+                { "name": "Prompt 4", "description": "Did I give my best today?", "priority": "high", "status": "pending" },
+                { "name": "Prompt 5 (Optional)", "description": "From your day… (appears based on mood/energy trends)", "priority": "medium", "status": "pending" }
+              ]
+            },
+            {
+              "name": "Weekly Review (Placeholder)",
+              "description": "Coming Soon",
+              "priority": "medium",
+              "status": "pending"
+            },
+            {
+              "name": "Monthly Review (Placeholder)",
+              "description": "Coming Soon",
+              "priority": "medium",
+              "status": "pending"
+            }
+          ]
+        },
+        { "name": "Add navigation logic", "description": "Each card routes to its respective ritual/review screen.", "priority": "high", "status": "pending" },
+        { "name": "Modal open/close animations", "description": "Slide up, swipe down, tap outside to dismiss.", "priority": "medium", "status": "pending" },
+        { "name": "Accessibility & color cues", "description": "44px+ touch targets, VoiceOver labels, warm/cool/distinct colors.", "priority": "medium", "status": "pending" },
+        { "name": "Disabled placeholders", "description": "Weekly/Monthly Review cards show 'Coming Soon' and trigger toast on tap.", "priority": "medium", "status": "pending" }
+      ]
+    },
+    {
+      "name": "Rise and Shine Ritual (Morning)",
+      "description": "Implement morning ritual screen with prompts, timer, streak tracking, and all UI/UX details.",
+      "priority": "highest",
+      "status": "pending",
+      "subtasks": [
+        { "name": "Screen title & icon", "description": "Set title to 'Rise and Shine', use Sun/alarm clock icon.", "priority": "medium", "status": "pending" },
+        { "name": "Prompt UI", "description": "Show all 4 prompts at once: grateful, avoiding, excited, must accomplish.", "priority": "high", "status": "pending" },
+        { "name": "Timer functionality", "description": "Time-Timer style circular countdown (5/10 min, user-adjustable), green/orange/red wedge, mm:ss readout, center dot, slider/crown, SVG animation, pulse, completion.", "priority": "high", "status": "pending" },
+        { "name": "Progress tracking & CTA", "description": "'Complete Ritual' button unlocks on timer finish, logs session, updates streak, navigates to deepWorkScreen2.", "priority": "high", "status": "pending" },
+        { "name": "Streak tracking", "description": "Local storage, per-ritual streaks, longest streak, session history.", "priority": "high", "status": "pending" },
+        { "name": "Visual/UX polish", "description": "Color theme, haptics, accessibility, spring animations.", "priority": "medium", "status": "pending" }
+      ]
+    },
+    {
+      "name": "Shutdown Ritual (Evening)",
+      "description": "Implement evening ritual screen with prompts, dynamic insights, timer, streak tracking, and all UI/UX details.",
+      "priority": "highest",
+      "status": "pending",
+      "subtasks": [
+        { "name": "Screen title & icon", "description": "Set title to 'Shutdown' or 'Evening Ritual', use Moon/power button icon.", "priority": "medium", "status": "pending" },
+        {
+          "name": "Reflection Prompt Card",
+          "description": "Show all reflection prompts at once, including optional based on mood/energy trends.",
+          "priority": "high",
+          "status": "pending",
+          "subtasks": [
+            { "name": "Prompt 1", "description": "What am I grateful for today?", "priority": "high", "status": "pending" },
+            { "name": "Prompt 2", "description": "How can I improve?", "priority": "high", "status": "pending" },
+            { "name": "Prompt 3", "description": "What did I learn today?", "priority": "high", "status": "pending" },
+            { "name": "Prompt 4", "description": "Did I give my best today?", "priority": "high", "status": "pending" },
+            { "name": "Prompt 5 (Optional)", "description": "From your day… (appears based on mood/energy trends)", "priority": "medium", "status": "pending" }
+          ]
+        },
+        { "name": "Dynamic Insight Card Switching", "description": "Top card swaps with: Deep Work Trends, Tasks Accomplished, Feeling Check-Ins. Default = prompts.", "priority": "high", "status": "pending" },
+        { "name": "Insight Toggle Buttons", "description": "Three toggle buttons: Deep Work, Tasks Done, Feeling Mood. Highlight active, haptic feedback, revert to prompts.", "priority": "medium", "status": "pending" },
+        { "name": "Timer functionality", "description": "Time-Timer countdown (5/10 min, user-adjustable), red wedge, mm:ss readout, slider/crown, SVG animation, pulse, completion.", "priority": "high", "status": "pending" },
+        { "name": "Completion flow & summary", "description": "'I'm Done Journaling' CTA unlocks on timer finish, triggers Shine glow + affirmation, logs session, updates streak, post-ritual summary card (streak, Say/Do Ratio, insight).", "priority": "high", "status": "pending" },
+        { "name": "Streak tracking", "description": "Local storage, per-ritual streaks, longest streak, session history.", "priority": "high", "status": "pending" },
+        { "name": "Visual/UX polish", "description": "Cool color palette, haptics, accessibility, spring animations.", "priority": "medium", "status": "pending" }
+      ]
+    },
+    {
+      "name": "Streak Tracking (Local)",
+      "description": "Implement AsyncStorage logic for ritual completions, streaks, Say/Do Ratio, and UI badges.",
+      "priority": "high",
+      "status": "pending",
+      "subtasks": [
+        { "name": "AsyncStorage logic", "description": "Persist ritual completions, recalculate streaks, handle errors/corruption defensively.", "priority": "high", "status": "pending" },
+        { "name": "UI badges & overlays", "description": "Display streaks in modal cards and post-ritual summary overlays.", "priority": "medium", "status": "pending" },
+        { "name": "Say/Do Ratio calculation", "description": "Calculate and display in post-ritual summary.", "priority": "medium", "status": "pending" }
+      ]
+    },
+    {
+      "name": "Placeholder Reviews",
+      "description": "Implement disabled Weekly/Monthly Review cards with 'Coming Soon' messaging and toast on tap.",
+      "priority": "medium",
+      "status": "pending"
+    },
+    {
+      "name": "User Experience & Personas",
+      "description": "Ensure flows for Focused Founder, Mindful Maker, Busy Parent. Modal grid, icons, micro-copy, color cues, animations, haptics, accessibility.",
+      "priority": "medium",
+      "status": "pending"
+    },
+    {
+      "name": "Technical Architecture & Infrastructure",
+      "description": "Implement all system components, data models, APIs, and infrastructure as per PRD.",
+      "priority": "medium",
+      "status": "pending",
+      "subtasks": [
+        { "name": "BottomTabNavigator update", "description": "Replace DeepWorkScreen1 with Plan tab.", "priority": "medium", "status": "pending" },
+        { "name": "Component structure", "description": "PlanModal, PlanOptionCard, RiseAndShineScreen, ShutdownScreen, StreakManager.", "priority": "medium", "status": "pending" },
+        { "name": "Expo SDK & libraries", "description": "Use Expo SDK (RN 0.79 / Expo 53), react-native-svg, expo-haptics, @react-navigation modals.", "priority": "medium", "status": "pending" },
+        { "name": "No backend for MVP", "description": "Plan for future Firebase/MongoDB sync.", "priority": "low", "status": "pending" }
+      ]
+    },
+    {
+      "name": "Development Roadmap & Dependency Chain",
+      "description": "Follow logical dependency chain and roadmap phases as per PRD.",
+      "priority": "medium",
+      "status": "pending",
+      "subtasks": [
+        { "name": "Phase 1 — MVP", "description": "Tab replacement, PlanModal, Rise & Shine, Shutdown, placeholders.", "priority": "high", "status": "pending" },
+        { "name": "Phase 2 — Enhancements", "description": "Analytics, configurable timer, guided audio, streak badge visuals.", "priority": "medium", "status": "pending" },
+        { "name": "Phase 3 — Extended Reviews", "description": "Weekly/Monthly Review flows, backend sync, calendar, insights.", "priority": "low", "status": "pending" }
+      ]
+    },
+    {
+      "name": "Risks & Mitigations",
+      "description": "Address SVG timer performance, scope creep, AsyncStorage data loss, resource constraints as per PRD.",
+      "priority": "medium",
+      "status": "pending"
+    },
+    {
+      "name": "Appendix",
+      "description": "Document prompt sets, color palette values, icon references, animation durations/easings.",
+      "priority": "low",
+      "status": "pending"
+    },
+    {
+      "name": "Testing & QA",
+      "description": "Defensive AsyncStorage handling, unit tests for streak logic, ritual completion, timer, toggles, manual QA for navigation, flows, edge cases, accessibility.",
+      "priority": "high",
+      "status": "pending"
+    }
+  ],
+  "dependencies": [],
+  "tags": ["feature", "plan-tab", "rituals", "ui", "animation", "streaks", "mvp"],
+  "createdAt": "2024-06-09T00:00:00Z",
+  "updatedAt": "2024-06-09T00:00:00Z"
+} 
