@@ -1,0 +1,171 @@
+# Product Requirements Document (PRD) – Vero App  
+## Feature: Evening Ritual (Journaling Companion Flow)
+
+---
+
+## 📌 Overview
+
+The **Evening Ritual** is a self-guided journaling screen users initiate intentionally from the “Rituals” section. It displays prompts to reflect on their day, anchored by a Time Timer to encourage focus. Users can explore context from their day via toggleable insight cards — including deep work summaries, task completions, and emotional check-ins. Vero acts only as a companion — it does not store journal entries in MVP.
+
+---
+
+## 🎯 Core Purpose
+
+- Reinforce end-of-day mindfulness and journaling habits
+- Help users review their day meaningfully
+- Provide context to guide deeper, richer journaling
+- Act as a lightweight ritual container (not a journaling capture app)
+
+---
+
+## ✨ Feature Highlights
+
+### 1. Reflection Prompt Card (Default View)
+- Shows all 4 default prompts at once
+- Includes optional 5th prompt if mood/energy trend detected
+- User writes in their **own journal**, not in-app
+
+#### Default Prompts:
+1. What am I grateful for today?
+2. How can I improve?
+3. What did I learn today?
+4. Did I give my best today?
+
+#### Optional Prompt:
+- Based on mood/energy trends detected during the day
+- Labeled: “From your day…”
+
+---
+
+### 2. Dynamic Insight Card Switching (Top Section)
+
+#### Tapping any insight button updates the **top card**:
+
+- 🧠 **Deep Work Trends**
+  - Total deep work time
+  - Session blocks or timeline view
+  - Focus peak callouts
+
+- ✅ **Tasks Accomplished**
+  - List of completed tasks (grouped by goal if available)
+  - Encouraging summary
+
+- 💖 **Feeling Check-Ins**
+  - Mood timeline (e.g. sparkline)
+  - Emotional tags or word cloud
+  - Micro-insight based on patterns
+
+> Default state is the Reflection Prompts card.
+
+---
+
+### 3. Insight Buttons (Middle Strip)
+- Located between the top card and timer
+- Three side-by-side toggle buttons:
+  - 🧠 Deep Work
+  - ✅ Tasks Done
+  - 💖 Feeling Check-Ins
+- Highlighted state shows which card is active
+- Deselecting reverts to prompt card
+
+---
+
+### 4. Time Timer (Bottom Section)
+- Visual countdown (Time Timer style)
+- Default duration: 5 minutes
+- User can adjust with slider or digital crown
+- Red wedge shrinks as time elapses
+- Accompanied by prompt: “Take this time to journal your reflections.”
+
+---
+
+### 5. Completion Flow
+- Button: **“I’m Done Journaling”**
+- Triggers:
+  - Shine animation (radial glow + affirmation)
+  - Affirmation message (e.g., “You honored your thoughts today.”)
+  - Post-Ritual Summary Card:
+    - 🔥 Streak continuation status
+    - 📊 Say/Do Ratio (based on day’s task/goal tracking)
+    - Encouraging insight line
+
+---
+
+## 🧠 UX Interaction Model
+
+- One screen, no navigation away
+- Top card dynamically updates on button tap
+- Bottom (insight buttons, timer, complete button) is static
+- Smooth fade or slide animation between top cards
+
+---
+
+## 🛠️ Technical Architecture
+
+- Platform: React Native (Expo SDK)
+- Components:
+  - `TopCardContainer` (switches between Prompt, Work, Tasks, Feelings)
+  - `InsightButtonRow`
+  - `TimeTimerCircle`
+  - `CompleteRitualButton`
+  - `ShineFeedback`
+- State Management:
+  - Active card (prompt/work/tasks/feelings)
+  - Timer state and adjustment
+  - Streak + Say/Do logic (backend-calculated or local model)
+
+---
+
+## 🔐 System Logging (MVP)
+
+- Ritual start and end timestamps
+- Active insight cards viewed
+- Timer duration used
+- Which optional prompt was shown
+- Whether ritual was completed (for streak tracking)
+- Say/Do ratio snapshot
+
+> Note: No journal content is stored. User reflections are offline.
+
+---
+
+## 🚧 Development Phases
+
+### MVP
+- Default prompt card
+- Time Timer
+- Insight button row
+- Top card swapping (work/tasks/feelings)
+- Shine animation + summary card
+- Logging of usage stats
+
+### Post-MVP
+- Journal page upload + analysis
+- Advanced insight generation
+- Voice-to-text journaling option
+- Personalized affirmation library
+- Weekly insight dashboard linking full ritual history
+
+---
+
+## 📌 Logical Build Order
+
+1. Layout framework (TopCard + Static Bottom Section)
+2. Prompt Card and Timer Circle
+3. Insight toggle logic and state switching
+4. Build each top card (Deep Work, Tasks, Feelings)
+5. Completion and Shine logic
+6. Summary Card component
+7. Logging hooks
+
+---
+
+## 🎨 Design Guidance
+
+- Theme: Calming, soft-close-of-day palette (`#121C2C → #2A3050`)
+- Typography: Legible, soft sans-serif (e.g., SF Pro Rounded)
+- Animations: Slow ripple, fade-in transitions
+- Touch targets: 44pt minimum
+- No input fields in MVP — focus is visual prompt and reflection
+
+---
