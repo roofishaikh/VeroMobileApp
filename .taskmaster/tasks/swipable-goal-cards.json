@@ -107,10 +107,60 @@
         }
       ],
       "notes": "Successfully implemented sophisticated Time Timer with dynamic colors, smooth animations, intuitive controls, and enhanced timer selection interface with quick presets."
+    },
+    {
+      "name": "Bug Fixes and UI Improvements",
+      "description": "Fix critical bugs and improve user experience for the Focus tab and Deep Work functionality",
+      "status": "pending",
+      "priority": "highest",
+      "subtasks": [
+        {
+          "name": "Fix Focus Nav Bar Double Press Issue",
+          "description": "Focus nav bar button requires double press to show deep work screen. Fix navigation to respond to single press.",
+          "status": "pending",
+          "priority": "highest",
+          "dependencies": []
+        },
+        {
+          "name": "Fix New Card Visibility After Add",
+          "description": "When Add is pressed, new card gets added but is not visible/confusing to locate. Ensure new card is immediately visible and positioned correctly after addition.",
+          "status": "pending",
+          "priority": "highest",
+          "dependencies": []
+        },
+        {
+          "name": "Improve Card Swipe Performance",
+          "description": "Swipe to new card visibility is very slow (2-3 seconds). When swiping right, show the card underneath immediately for better responsiveness.",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": []
+        },
+        {
+          "name": "Add Play/Pause Icon for Deep Work",
+          "description": "Start deep work should have play icon. Once session starts, button label should change to 'Pause Deep Work Session' with pause icon.",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": []
+        },
+        {
+          "name": "Show Deep Work Countdown",
+          "description": "Deep work countdown is not displayed. Implement countdown timer visibility during deep work sessions.",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": []
+        },
+        {
+          "name": "Fix Deep Work Stop Screen",
+          "description": "When clicking stop, new screen is shown but missing bottom nav bar. This screen should show summary of completed work in the deep work session instead of current implementation.",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": []
+        }
+      ]
     }
   ],
   "dependencies": [],
-  "tags": ["feature", "focus-tab", "ui", "animation"],
+  "tags": ["feature", "focus-tab", "ui", "animation", "bug-fixes"],
   "createdAt": "2024-03-21T00:00:00Z",
-  "updatedAt": "2024-03-21T00:00:00Z"
+  "updatedAt": "2024-06-09T00:00:00Z"
 } 
