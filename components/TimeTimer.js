@@ -4,11 +4,14 @@ import Svg, { Path, Circle, Line, Text as SvgText } from 'react-native-svg';
 import { MaterialIcons } from '@expo/vector-icons';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const TIMER_SIZE = Math.min(Math.max(SCREEN_WIDTH * 0.42, 150), 200); // Restore original size
-const STROKE_WIDTH = Math.max(8, Math.round(TIMER_SIZE * 0.06));
-const RADIUS = (TIMER_SIZE - STROKE_WIDTH) / 2 - 24; // Reduce radius by 24px
+const TIMER_SIZE = Math.min(Math.max(SCREEN_WIDTH * 0.42, 150), 140); // Restore original size
+const STROKE_WIDTH = Math.max(5, Math.round(TIMER_SIZE * 0.06));
+const RADIUS = (TIMER_SIZE - STROKE_WIDTH) / 2 - 4; // Reduce radius by 24px
 const CENTER = TIMER_SIZE / 2;
 const MINUTES_MAX = 60;
+const DEGREES_PER_MINUTE = 360 / MINUTES_MAX;
+const OUTER_PADDING = 30; // Add extra space for numbers
+const OUTER_SIZE = TIMER_SIZE + OUTER_PADDING * 2;
 
 // Simplified arc function for timer display
 function createTimerArc(x, y, radius, progress) {
@@ -60,13 +63,13 @@ const renderTicks = () => {
     let tickLength, tickColor, tickWidth;
     if (i % 15 === 0) {
       // Hour bar (0, 15, 30, 45)
-      tickLength = 24;
-      tickColor = '#1565c0'; // Blue for hour bars
-      tickWidth = 4;
+      tickLength = 12;
+      tickColor = '#000000'; // Black for hour bars
+      tickWidth = 2;
     } else if (i % 5 === 0) {
       // 5-minute bar
-      tickLength = 16;
-      tickColor = '#888';
+      tickLength = 12;
+      tickColor = '#000000'; // Black for hour bars
       tickWidth = 2;
     } else {
       // Minute bar
@@ -74,12 +77,13 @@ const renderTicks = () => {
       tickColor = '#CCC';
       tickWidth = 1;
     }
-    const outerR = (TIMER_SIZE / 2) + 2; // move ticks outside the white timer
-    const innerR = outerR - tickLength;
-    const x1 = CENTER + outerR * Math.cos(angle);
-    const y1 = CENTER + outerR * Math.sin(angle);
-    const x2 = CENTER + innerR * Math.cos(angle);
-    const y2 = CENTER + innerR * Math.sin(angle);
+    // All ticks should touch the circumference of the timer circle
+    const outerR = RADIUS + STROKE_WIDTH / 10; // Circumference of timer
+    const innerR = outerR + tickLength;
+    const x1 = CENTER + OUTER_PADDING + outerR * Math.cos(angle);
+    const y1 = CENTER + OUTER_PADDING + outerR * Math.sin(angle);
+    const x2 = CENTER + OUTER_PADDING + innerR * Math.cos(angle);
+    const y2 = CENTER + OUTER_PADDING + innerR * Math.sin(angle);
     ticks.push(
       <Line
         key={`tick-${i}`}
@@ -101,9 +105,9 @@ const renderNumbers = () => {
   for (let i = 0; i < 60; i += 5) {
     const angle = (i * 6 - 90) * (Math.PI / 180);
     const num = i === 0 ? '0' : String(i);
-    const numR = (TIMER_SIZE / 2) + 22; // move numbers further outside
-    const nx = CENTER + numR * Math.cos(angle);
-    const ny = CENTER + numR * Math.sin(angle) + 5;
+    const numR = RADIUS + STROKE_WIDTH / 2 + 23; // Place numbers just outside the timer
+    const nx = CENTER + OUTER_PADDING + numR * Math.cos(angle);
+    const ny = CENTER + OUTER_PADDING + numR * Math.sin(angle) + 5;
     numbers.push(
       <SvgText
         key={`num-${i}`}
@@ -123,7 +127,7 @@ const renderNumbers = () => {
 
 const TimeTimer = () => {
   const [totalMinutes, setTotalMinutes] = useState(25);
-  const [secondsLeft, setSecondsLeft] = useState(25 * 60);
+  const [minutesLeft, setMinutesLeft] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [dragAngle, setDragAngle] = useState(null);
@@ -139,41 +143,29 @@ const TimeTimer = () => {
   // Memoized drag handler to prevent recreation on every render
   const handleDrag = useCallback((nativeEvent) => {
     const { locationX, locationY } = nativeEvent;
-    
     // Calculate position relative to the center of the timer
     const dx = locationX - CENTER;
     const dy = locationY - CENTER;
-    
     // Calculate angle from center (0 degrees at top, clockwise)
     let angle = Math.atan2(dx, -dy) * (180 / Math.PI);
     if (angle < 0) angle += 360;
-    
+    // Snap angle to nearest minute bar (6 degrees per minute)
+    const snappedAngle = Math.round(angle / DEGREES_PER_MINUTE) * DEGREES_PER_MINUTE;
     // Ensure angle is within valid range (0-360)
-    angle = Math.max(0, Math.min(360, angle));
-    
-    setDragAngle(angle);
-    dragAngleRef.current = angle;
-    
-    const minutes = Math.max(1, Math.round((angle / 360) * MINUTES_MAX));
+    const clampedAngle = Math.max(0, Math.min(360, snappedAngle));
+    setDragAngle(clampedAngle);
+    dragAngleRef.current = clampedAngle;
+    // Snap minutes to nearest bar (1-60)
+    const minutes = Math.max(1, Math.round((clampedAngle / 360) * MINUTES_MAX));
     setPreviewMinutes(minutes);
     previewMinutesRef.current = minutes;
-    
-    console.log('Drag Debug:', { 
-      locationX, 
-      locationY, 
-      center: CENTER,
-      dx, 
-      dy, 
-      angle: angle.toFixed(2), 
-      minutes 
-    });
   }, []);
 
-  // Timer countdown effect
+  // Timer countdown effect (minutes only)
   useEffect(() => {
-    if (isRunning && secondsLeft > 0) {
+    if (isRunning && minutesLeft > 0) {
       intervalRef.current = setInterval(() => {
-        setSecondsLeft((prev) => {
+        setMinutesLeft((prev) => {
           if (prev <= 1) {
             clearInterval(intervalRef.current);
             setIsRunning(false);
@@ -181,7 +173,7 @@ const TimeTimer = () => {
           }
           return prev - 1;
         });
-      }, 1000);
+      }, 60000); // 1 minute interval
     } else {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
@@ -195,10 +187,10 @@ const TimeTimer = () => {
         intervalRef.current = null;
       }
     };
-  }, [isRunning, secondsLeft]);
+  }, [isRunning, minutesLeft]);
 
-  // Calculate progress and arc
-  const progress = secondsLeft / (totalMinutes * 60);
+  // Calculate progress and arc (minutes only)
+  const progress = minutesLeft / totalMinutes;
   
   // Use drag angle when dragging, set angle when not dragging but time was set by drag, otherwise use progress
   let currentProgress;
@@ -213,8 +205,8 @@ const TimeTimer = () => {
     currentProgress = progress;
   }
   
-  // Create the arc path
-  const arcPath = createTimerArc(CENTER, CENTER, RADIUS, currentProgress);
+  // Create the arc path (centered with OUTER_PADDING)
+  const arcPath = createTimerArc(CENTER + OUTER_PADDING, CENTER + OUTER_PADDING, RADIUS, currentProgress);
 
   // Drag to set time - improved pan responder
   const panResponder = useRef(
@@ -222,7 +214,6 @@ const TimeTimer = () => {
       onStartShouldSetPanResponder: () => true,
       onMoveShouldSetPanResponder: () => true,
       onPanResponderGrant: (evt, gestureState) => {
-        console.log('Pan Grant:', evt.nativeEvent);
         setIsDragging(true);
         handleDrag(evt.nativeEvent);
       },
@@ -230,30 +221,22 @@ const TimeTimer = () => {
         handleDrag(evt.nativeEvent);
       },
       onPanResponderRelease: (evt, gestureState) => {
-        console.log('Pan Release:', { 
-          dragAngle: dragAngleRef.current, 
-          previewMinutes: previewMinutesRef.current 
-        });
         setIsDragging(false);
-        
         // Use ref values instead of state values
         if (dragAngleRef.current !== null && previewMinutesRef.current !== null) {
-          console.log('Setting new time:', previewMinutesRef.current, 'minutes');
           setTotalMinutes(previewMinutesRef.current);
-          setSecondsLeft(previewMinutesRef.current * 60);
+          setMinutesLeft(previewMinutesRef.current);
           // Store the angle where the time was set
           setSetAngle(dragAngleRef.current);
           // Start the timer automatically
           setIsRunning(true);
         }
-        
         setPreviewMinutes(null);
         setDragAngle(null);
         dragAngleRef.current = null;
         previewMinutesRef.current = null;
       },
       onPanResponderTerminate: () => {
-        console.log('Pan Terminate');
         setIsDragging(false);
         setPreviewMinutes(null);
         setDragAngle(null);
@@ -263,35 +246,32 @@ const TimeTimer = () => {
     })
   ).current;
 
-  // Timer display
+  // Timer display (minutes only)
   const displayMinutes = isDragging && previewMinutes !== null
     ? previewMinutes
-    : Math.floor(secondsLeft / 60);
-  const displaySeconds = isDragging && previewMinutes !== null
-    ? 0
-    : secondsLeft % 60;
+    : minutesLeft;
 
   // Debug logging (remove in production)
   useEffect(() => {
     console.log('Timer State:', {
       totalMinutes,
-      secondsLeft,
+      minutesLeft,
       isRunning,
       isDragging,
       setAngle: setAngle?.toFixed(2),
       progress: progress.toFixed(2),
       currentProgress: currentProgress.toFixed(2)
     });
-  }, [totalMinutes, secondsLeft, isRunning, isDragging, setAngle, progress, currentProgress]);
+  }, [totalMinutes, minutesLeft, isRunning, isDragging, setAngle, progress, currentProgress]);
 
   return (
     <View style={styles.container}>
       <View style={styles.svgWrapper} {...panResponder.panHandlers}>
-        <Svg width={TIMER_SIZE} height={TIMER_SIZE} ref={svgRef}>
+        <Svg width={OUTER_SIZE} height={OUTER_SIZE} ref={svgRef}>
           {/* Background circle (no border, maximized) */}
           <Circle
-            cx={CENTER}
-            cy={CENTER}
+            cx={CENTER + OUTER_PADDING}
+            cy={CENTER + OUTER_PADDING}
             r={TIMER_SIZE / 2 - 7}
             fill="#fff"
           />
@@ -310,14 +290,14 @@ const TimeTimer = () => {
           )}
           {/* Center dot */}
           <Circle
-            cx={CENTER}
-            cy={CENTER}
+            cx={CENTER + OUTER_PADDING}
+            cy={CENTER + OUTER_PADDING}
             r={8}
             fill="#F45B47"
           />
         </Svg>
         {/* Timer value in center */}
-        <View style={styles.centerText} pointerEvents="none">
+        <View style={[styles.centerText, { left: OUTER_PADDING, right: OUTER_PADDING }]} pointerEvents="none">
           {/* <Text style={styles.timerValue}>
             {displayMinutes.toString().padStart(2, '0')}:{displaySeconds.toString().padStart(2, '0')}
           </Text> */}
@@ -332,13 +312,21 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: '100%',
+    width: OUTER_SIZE + 30,
+    // borderColor: 'black',
+    // borderWidth: 1,
+    position: 'absolute',
+    top: Dimensions.get("window").height > 900 ? -10 : -30,
+  
   },
   svgWrapper: {
-    width: TIMER_SIZE,
-    height: TIMER_SIZE,
+    width: OUTER_SIZE,
+    height: OUTER_SIZE,
     alignItems: 'center',
     justifyContent: 'center',
+    // borderColor: 'red',
+    // borderWidth: 1,
+    borderRadius: OUTER_SIZE / 2 ,
   },
   centerText: {
     position: 'absolute',
@@ -352,11 +340,13 @@ const styles = StyleSheet.create({
     fontSize: 38,
     fontWeight: 'bold',
     color: '#222',
+    
   },
   timerLabel: {
     fontSize: 14,
     color: '#888',
     marginTop: 2,
+    
   },
 });
 

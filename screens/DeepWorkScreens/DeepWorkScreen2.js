@@ -18,6 +18,8 @@ import { Checkbox, IconButton } from 'react-native-paper';
 import { MaterialIcons } from "@expo/vector-icons";
 import { initialGoals } from "../../Data/goalsData";
 import * as SecureStore from 'expo-secure-store';
+import SwipableGoalCards from '../../components/SwipableGoalCards';
+import CardPilesRL from '../../components/CardPilesRL';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.25;
@@ -52,7 +54,9 @@ const validateSubgoal = (text, existingSubgoals, currentIndex = -1) => {
 function DeepWorkScreen2({ navigation }) {
   const [showStopwatchCard, setShowStopwatchCard] = useState(false);
   const [showSetTimeCard, setShowSetTimeCard] = useState(false);
-  const [goals, setGoals] = useState(initialGoals);
+  const [centerDeck, setCenterDeck] = useState(initialGoals);
+  const [leftPile, setLeftPile] = useState([]);
+  const [rightPile, setRightPile] = useState([]);
   const [nextId, setNextId] = useState(4);
   
   // Validation state
@@ -66,9 +70,6 @@ function DeepWorkScreen2({ navigation }) {
   const [isLoading, setIsLoading] = useState(true);
 
   // Pile state for visual representation
-  const [leftPile, setLeftPile] = useState([]);
-  const [rightPile, setRightPile] = useState([]);
-
   const translateX = useSharedValue(0);
   const rotate = useSharedValue(0);
   
@@ -95,17 +96,17 @@ function DeepWorkScreen2({ navigation }) {
       const savedData = await SecureStore.getItemAsync(GOALS_STORAGE_KEY);
       if (savedData) {
         const parsedData = JSON.parse(savedData);
-        setGoals(parsedData.goals || initialGoals);
+        setCenterDeck(parsedData.goals || initialGoals);
         setNextId(parsedData.nextId || 4);
       } else {
         // No saved data, use initial goals
-        setGoals(initialGoals);
+        setCenterDeck(initialGoals);
         setNextId(4);
       }
     } catch (error) {
       console.error('Error loading goals from storage:', error);
       // Fallback to initial goals on error
-      setGoals(initialGoals);
+      setCenterDeck(initialGoals);
       setNextId(4);
     } finally {
       setIsLoading(false);
@@ -120,43 +121,32 @@ function DeepWorkScreen2({ navigation }) {
   // Save data whenever goals change
   useEffect(() => {
     if (!isLoading) {
-      saveGoalsToStorage(goals);
+      saveGoalsToStorage(centerDeck);
     }
-  }, [goals, nextId, isLoading]);
+  }, [centerDeck, nextId, isLoading]);
 
   const handleSwiped = (direction) => {
-    if (goals.length <= 1) {
-      Alert.alert(
-        "Cannot Swipe Last Card",
-        "You need at least one goal card. Add more goals before swiping this one.",
-        [{ text: "OK" }]
-      );
-      translateX.value = withSpring(0);
-      rotate.value = withSpring(0);
-      return;
-    }
+    if (centerDeck.length === 0) return;
 
-    setGoals((prev) => {
-      const updated = [...prev];
-      const [top] = updated.splice(0, 1);
-      
-      // Move card to appropriate pile based on direction
-      if (direction === 'left') {
-        setLeftPile(prevPile => [...prevPile, top]);
-        leftPileScale.value = withSpring(1.3, { damping: 10, stiffness: 100 }, () => {
-          leftPileScale.value = withSpring(1);
-        });
-      } else if (direction === 'right') {
-        setRightPile(prevPile => [...prevPile, top]);
-        rightPileScale.value = withSpring(1.3, { damping: 10, stiffness: 100 }, () => {
-          rightPileScale.value = withSpring(1);
-        });
+    const [top, ...rest] = centerDeck;
+
+    if (direction === 'right') {
+      setRightPile([top, ...rightPile]);
+      if (rest.length === 0 && leftPile.length > 0) {
+        setCenterDeck([leftPile[0]]);
+        setLeftPile(leftPile.slice(1));
+      } else {
+        setCenterDeck(rest);
       }
-      
-      return updated;
-    });
-    translateX.value = 0;
-    rotate.value = 0;
+    } else if (direction === 'left') {
+      setLeftPile([top, ...leftPile]);
+      if (rest.length === 0 && rightPile.length > 0) {
+        setCenterDeck([rightPile[0]]);
+        setRightPile(rightPile.slice(1));
+      } else {
+        setCenterDeck(rest);
+      }
+    }
   };
 
   const gestureHandler = useAnimatedGestureHandler({
@@ -169,8 +159,13 @@ function DeepWorkScreen2({ navigation }) {
         const direction = translateX.value > 0 ? "right" : "left";
         translateX.value = withSpring(
           direction === "right" ? SCREEN_WIDTH : -SCREEN_WIDTH,
-          { damping: 15, stiffness: 150 },
-          () => runOnJS(handleSwiped)(direction)
+          { damping: 8, stiffness: 250 },
+          () => {
+            runOnJS(handleSwiped)(direction);
+            // Reset animation values for the next card
+            translateX.value = 0;
+            rotate.value = 0;
+          }
         );
       } else {
         translateX.value = withSpring(0);
@@ -187,19 +182,21 @@ function DeepWorkScreen2({ navigation }) {
   }));
 
   const handleDelete = () => {
-    if (goals.length <= 1) {
+    if (centerDeck.length <= 1) {
       Alert.alert(
         "Cannot Delete Last Card",
         "You need at least one goal card. Add more goals before deleting this one.",
         [{ text: "OK" }]
       );
+      translateX.value = withSpring(0);
+      rotate.value = withSpring(0);
       return;
     }
-    setGoals((prev) => prev.slice(1));
+    setCenterDeck((prev) => prev.slice(1));
   };
 
   const handleAdd = () => {
-    setGoals((prev) => [...prev, { id: nextId, text: `New Goal ${nextId}`, subgoals: [] }]);
+    setCenterDeck((prev) => [...prev, { id: nextId, text: `New Goal ${nextId}`, subgoals: [] }]);
     setNextId((id) => id + 1);
   };
 
@@ -211,10 +208,10 @@ function DeepWorkScreen2({ navigation }) {
   const [showConfetti, setShowConfetti] = useState(false);
 
   const toggleSubgoal = (goalIndex, subIndex) => {
-    const updatedGoals = [...goals];
+    const updatedGoals = [...centerDeck];
     const wasCompleted = updatedGoals[goalIndex].subgoals[subIndex].isCompleted;
     updatedGoals[goalIndex].subgoals[subIndex].isCompleted = !wasCompleted;
-    setGoals(updatedGoals);
+    setCenterDeck(updatedGoals);
 
     // Play appropriate sound based on action
     if (!wasCompleted) {
@@ -240,7 +237,7 @@ function DeepWorkScreen2({ navigation }) {
     }
 
     // Check for duplicates
-    const existingSubgoals = goals[goalIndex].subgoals;
+    const existingSubgoals = centerDeck[goalIndex].subgoals;
     const isDuplicate = existingSubgoals.some(sub => 
       sub.text.toLowerCase().trim() === text.toLowerCase().trim()
     );
@@ -250,14 +247,14 @@ function DeepWorkScreen2({ navigation }) {
       return;
     }
 
-    const updatedGoals = [...goals];
+    const updatedGoals = [...centerDeck];
     const newSubgoal = {
       id: Date.now(),
       text: text.trim(),
       isCompleted: false
     };
     updatedGoals[goalIndex].subgoals.push(newSubgoal);
-    setGoals(updatedGoals);
+    setCenterDeck(updatedGoals);
   };
 
   const deleteSubgoal = (goalIndex, subIndex) => {
@@ -273,9 +270,9 @@ function DeepWorkScreen2({ navigation }) {
           text: "Delete",
           style: "destructive",
           onPress: () => {
-            const updatedGoals = [...goals];
+            const updatedGoals = [...centerDeck];
             updatedGoals[goalIndex].subgoals.splice(subIndex, 1);
-            setGoals(updatedGoals);
+            setCenterDeck(updatedGoals);
           }
         }
       ]
@@ -284,9 +281,9 @@ function DeepWorkScreen2({ navigation }) {
 
   // Validation helper functions
   const validateAndUpdateGoalTitle = (goalIndex, newText) => {
-    const updatedGoals = [...goals];
+    const updatedGoals = [...centerDeck];
     updatedGoals[goalIndex].text = newText;
-    setGoals(updatedGoals);
+    setCenterDeck(updatedGoals);
 
     // Validate and update error state
     const error = validateGoalTitle(newText);
@@ -304,9 +301,9 @@ function DeepWorkScreen2({ navigation }) {
   };
 
   const validateAndUpdateSubgoal = (goalIndex, subIndex, newText) => {
-    const updatedGoals = [...goals];
+    const updatedGoals = [...centerDeck];
     updatedGoals[goalIndex].subgoals[subIndex].text = newText;
-    setGoals(updatedGoals);
+    setCenterDeck(updatedGoals);
 
     // Validate and update error state
     const error = validateSubgoal(newText, updatedGoals[goalIndex].subgoals, subIndex);
@@ -334,6 +331,17 @@ function DeepWorkScreen2({ navigation }) {
     return Object.keys(validationErrors).length > 0;
   };
 
+  const handleReorderSubgoals = (goalIndex, newSubgoalsArray) => {
+    setCenterDeck(prev => {
+      const updated = [...prev];
+      updated[goalIndex] = {
+        ...updated[goalIndex],
+        subgoals: newSubgoalsArray,
+      };
+      return updated;
+    });
+  };
+
   return (
     <GradientScreenWrapper>
       {isLoading ? (
@@ -342,181 +350,38 @@ function DeepWorkScreen2({ navigation }) {
         </View>
       ) : (
         <>
-          {/* Left Pile - Positioned absolutely */}
-          <View style={styles.leftPileContainer}>
-            <Animated.View style={[styles.pileIcon, { transform: [{ scale: leftPileScale }] }]}>
-              <MaterialIcons name="layers" size={24} color="#4CAF50" />
-            </Animated.View>
-            <Text style={styles.pileCounter}>{leftPile.length}</Text>
-            <Text style={styles.pileLabel}>Left Pile</Text>
-          </View>
-
-          {/* Right Pile - Positioned absolutely */}
-          <View style={styles.rightPileContainer}>
-            <Animated.View style={[styles.pileIcon, { transform: [{ scale: rightPileScale }] }]}>
-              <MaterialIcons name="layers" size={24} color="#2196F3" />
-            </Animated.View>
-            <Text style={styles.pileCounter}>{rightPile.length}</Text>
-            <Text style={styles.pileLabel}>Right Pile</Text>
-          </View>
+          <CardPilesRL
+            leftPile={leftPile}
+            rightPile={rightPile}
+            leftPileScale={leftPileScale}
+            rightPileScale={rightPileScale}
+            styles={styles}
+          />
 
           {/* Main Swipe Zone - Restored to original */}
-          <View style={styles.swipeZone}>
-            {goals.length === 0 ? (
-              <View style={styles.emptyStateContainer}>
-                <Text style={styles.emptyStateText}>No goals available</Text>
-                <Pressable onPress={handleAdd} style={styles.addFirstCardButton}>
-                  <MaterialIcons name="add" size={24} color="#4CAF50" />
-                  <Text style={styles.addFirstCardText}>Add Your First Goal</Text>
-                </Pressable>
-              </View>
-            ) : (
-              goals.map((goal, index) => {
-                const isTop = index === 0;
-                return (
-                  <PanGestureHandler
-                    key={goal.id}
-                    enabled={isTop}
-                    onGestureEvent={gestureHandler}
-                  >
-                    <Animated.View style={[styles.card, isTop && animatedCardStyle]}>
-                      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                        <ScrollView
-                          style={{ flexGrow: 1 }}
-                          contentContainerStyle={{ justifyContent: 'flex-start', paddingBottom: 20 }}
-                          showsVerticalScrollIndicator={false}
-                        >
-                          <TextInput
-                            style={[
-                              styles.cardText,
-                              getValidationError(index) && styles.inputError
-                            ]}
-                            multiline={true}
-                            placeholder="Enter goal title..."
-                            placeholderTextColor="#999"
-                            value={goal.text}
-                            onChangeText={(newText) => {
-                              validateAndUpdateGoalTitle(index, newText);
-                            }}
-                          />
-                          {getValidationError(index) && (
-                            <Text style={styles.errorText}>{getValidationError(index)}</Text>
-                          )}
-                          <Text style={styles.charCount}>
-                            {goal.text.length}/{MAX_GOAL_TITLE_LENGTH}
-                          </Text>
-
-                          {goal.subgoals.map((sub, subIdx) => (
-                            <View key={sub.id} style={styles.subgoalRow}>
-                              <Pressable 
-                                onPress={() => toggleSubgoal(index, subIdx)}
-                                style={styles.checkboxContainer}
-                              >
-                                <Checkbox
-                                  status={sub.isCompleted ? 'checked' : 'unchecked'}
-                                  color="#4CAF50"
-                                  uncheckedColor="#ccc"
-                                  style={styles.checkbox}
-                                />
-                              </Pressable>
-                              <View style={styles.subgoalInputContainer}>
-                                <TextInput
-                                  value={sub.text}
-                                  placeholder="Enter subgoal..."
-                                  placeholderTextColor="#999"
-                                  onChangeText={(newText) => {
-                                    validateAndUpdateSubgoal(index, subIdx, newText);
-                                  }}
-                                  style={[
-                                    styles.subgoalText,
-                                    sub.isCompleted && styles.completedSubgoalText,
-                                    getValidationError(index, subIdx) && styles.inputError
-                                  ]}
-                                />
-                                <Text style={styles.charCount}>
-                                  {sub.text.length}/{MAX_SUBGOAL_LENGTH}
-                                </Text>
-                              </View>
-                              <IconButton
-                                icon="delete"
-                                size={20}
-                                onPress={() => deleteSubgoal(index, subIdx)}
-                                style={styles.deleteSubgoalButton}
-                              />
-                            </View>
-                          ))}
-                          
-                          {/* Show subgoal validation errors */}
-                          {goal.subgoals.map((sub, subIdx) => 
-                            getValidationError(index, subIdx) && (
-                              <Text key={`error-${sub.id}`} style={styles.errorText}>
-                                {getValidationError(index, subIdx)}
-                              </Text>
-                            )
-                          )}
-                          
-                          {/* Validation summary */}
-                          {hasValidationErrors() && Object.keys(validationErrors).some(key => key.startsWith(`goal-${index}`) || key.startsWith(`subgoal-${index}`)) && (
-                            <View style={styles.validationSummary}>
-                              <Text style={styles.validationSummaryTitle}>Please fix the following issues:</Text>
-                              {Object.entries(validationErrors)
-                                .filter(([key]) => key.startsWith(`goal-${index}`) || key.startsWith(`subgoal-${index}`))
-                                .map(([key, error]) => (
-                                  <Text key={key} style={styles.validationSummaryItem}>• {error}</Text>
-                                ))}
-                            </View>
-                          )}
-                          
-                          {/* Add Subgoal Input Section */}
-                          <View style={styles.addSubgoalSection}>
-                            <TextInput
-                              style={styles.newSubgoalInput}
-                              placeholder="Enter new subgoal text..."
-                              placeholderTextColor="#999"
-                              value={newSubgoalText}
-                              onChangeText={setNewSubgoalText}
-                              multiline={true}
-                            />
-                            <Pressable 
-                              onPress={() => {
-                                addSubgoalWithText(index, newSubgoalText);
-                                setNewSubgoalText(""); // Clear input after adding
-                              }}
-                              style={[
-                                styles.addSubgoalButton,
-                                !newSubgoalText.trim() && styles.addSubgoalButtonDisabled
-                              ]}
-                              disabled={!newSubgoalText.trim()}
-                            >
-                              <MaterialIcons 
-                                name="add-circle" 
-                                size={24} 
-                                color={newSubgoalText.trim() ? "#4CAF50" : "#ccc"} 
-                              />
-                              <Text style={[
-                                styles.addSubgoalText,
-                                !newSubgoalText.trim() && styles.addSubgoalTextDisabled
-                              ]}>
-                                Add Subgoal
-                              </Text>
-                            </Pressable>
-                          </View>
-                        </ScrollView>
-                      </TouchableWithoutFeedback>
-                      <View style={styles.iconRow}>
-                        <Pressable onPress={handleDelete} style={styles.iconButton}>
-                          <MaterialIcons name="delete" size={24} color="#F45B47" />
-                        </Pressable>
-                        <Pressable onPress={handleAdd} style={styles.iconButton}>
-                          <MaterialIcons name="add" size={24} color="#4CAF50" />
-                        </Pressable>
-                      </View>
-                    </Animated.View>
-                  </PanGestureHandler>
-                );
-              }).reverse()
-            )}
-          </View>
+          <SwipableGoalCards
+            goals={centerDeck}
+            leftPile={leftPile}
+            rightPile={rightPile}
+            animatedCardStyle={animatedCardStyle}
+            gestureHandler={gestureHandler}
+            handleAdd={handleAdd}
+            handleDelete={handleDelete}
+            validateAndUpdateGoalTitle={validateAndUpdateGoalTitle}
+            validateAndUpdateSubgoal={validateAndUpdateSubgoal}
+            getValidationError={getValidationError}
+            hasValidationErrors={hasValidationErrors}
+            validationErrors={validationErrors}
+            MAX_GOAL_TITLE_LENGTH={MAX_GOAL_TITLE_LENGTH}
+            MAX_SUBGOAL_LENGTH={MAX_SUBGOAL_LENGTH}
+            toggleSubgoal={toggleSubgoal}
+            deleteSubgoal={deleteSubgoal}
+            addSubgoalWithText={addSubgoalWithText}
+            newSubgoalText={newSubgoalText}
+            setNewSubgoalText={setNewSubgoalText}
+            styles={styles}
+            onReorderSubgoals={handleReorderSubgoals}
+          />
         </>
       )}
 
@@ -556,22 +421,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 20,
   },
-  leftPileContainer: {
-    position: 'absolute',
-    left: 20,
-    top: '50%',
-    transform: [{ translateY: -50 }],
-    alignItems: 'center',
-    zIndex: 10,
-  },
-  rightPileContainer: {
-    position: 'absolute',
-    right: 20,
-    top: '50%',
-    transform: [{ translateY: -50 }],
-    alignItems: 'center',
-    zIndex: 10,
-  },
   swipeZone: {
     width: Math.min(SCREEN_WIDTH * 0.85, 420),
     height: SCREEN_HEIGHT < 700 ? SCREEN_HEIGHT * 0.45 : SCREEN_HEIGHT * 0.50,
@@ -594,33 +443,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 6,
     elevation: 4,
-    borderColor: '#000000',
-    borderWidth: 3,
-  },
-  pileIcon: {
-    width: SCREEN_WIDTH < 400 ? 36 : 50,
-    height: SCREEN_WIDTH < 400 ? 36 : 50,
-    backgroundColor: '#fff',
-    borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  pileCounter: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 5,
-  },
-  pileLabel: {
-    fontSize: 12,
-    color: '#666',
-    textAlign: 'center',
   },
   cardText: {
     fontSize: 30,
