@@ -1,0 +1,295 @@
+**Vero PRD – Plan Feature & Rise‑and‑Shine Ritual**
+
+---
+
+# Overview
+
+The **Plan feature** introduces a unified planning hub that replaces the current DeepWorkScreen1 tab in Vero’s bottom navigation.  When users tap **Plan**, a modal presents four ritual / review modules:
+
+1. **Rise and Shine** – Morning ritual (existing functionality, enhanced)
+2. **Shutdown** – Evening ritual & reflection
+3. **Weekly Review** – Weekly planning (placeholder)
+4. **Monthly Review** – Monthly reflection (placeholder)
+
+This hub helps users organise their day, close their evenings, and maintain regular review cycles—all from one intuitive entry point—reinforcing mindful habit loops and streak‑based motivation.
+
+# Core Features
+
+## Plan Modal
+
+* **What it does**: Presents a grid of planning options (Rise & Shine, Shutdown, Weekly Review, Monthly Review) in a bottom‑sheet modal launched from the *Plan* tab.
+* **Why it's important**: Centralises rituals and planning workflows, reducing navigation friction and surfacing a clear mental model.
+* **How it works**: When the *Plan* icon is tapped, a modal slides up containing a 2×2 grid of PlanOptionCards. Selecting a card routes the user to its respective ritual/review screen.
+
+## Rise and Shine Ritual
+
+* **Icon**: Sun or alarm clock
+* **Purpose**: Morning routine and daily planning
+* **Core Prompts**:
+
+  1. What am I grateful for today?
+  2. What am I avoiding?
+  3. What am I excited about today?
+  4. What is one thing I must accomplish today?
+* **Timer Functionality**: 5‑ or 10‑minute Time‑Timer style countdown initiated by tapping the circular timer.
+* **Progress Tracking**: On timer completion, the “Complete Ritual” button unlocks, the session is logged, and the streak counter updates.
+
+## Shutdown Ritual
+
+* **Icon**: Moon or power button
+* **Purpose**: Evening routine and reflection
+
+### 📌 Overview
+
+The **Evening Ritual (Shutdown)** is a self‑guided journaling screen users launch from the *Plan* hub. It mirrors Rise & Shine’s structure, but focuses on end‑of‑day mindfulness, review, and closure. Vero only guides; journal entries stay in the user’s own medium.
+
+### 🎯 Core Purpose
+
+* Reinforce end‑of‑day mindfulness habits
+* Help users meaningfully review their day
+* Provide context (deep‑work, tasks, mood) to guide richer journaling
+* Remain a lightweight ritual container (no in‑app diary storage in MVP)
+
+### ✨ Feature Highlights
+
+#### 1. Reflection Prompt Card (Default View)
+
+* Shows all 4 default prompts at once (see **Core Prompts** below).
+* Adds an optional 5th prompt when mood/energy trends warrant deeper reflection *(labelled “From your day…”)*.
+
+#### 2. Dynamic Insight Card Switching (Top Section)
+
+Tapping any insight button swaps the **top card** with contextual data:
+
+* 🧠 **Deep Work Trends** – total focus time, timeline view, peak focus callouts.
+* ✅ **Tasks Accomplished** – completed tasks list grouped by goal, upbeat summary.
+* 💖 **Feeling Check‑Ins** – mood timeline sparkline, emotional tags, micro‑insight.
+
+> Default state = Reflection Prompts card.
+
+#### 3. Insight Buttons (Middle Strip)
+
+Three toggle buttons displayed side‑by‑side: *Deep Work*, *Tasks Done*, *Feeling Check‑Ins*. Highlight shows active card; tapping again reverts to prompts.
+
+#### 4. Time Timer (Bottom Section)
+
+* Visual Time‑Timer countdown (default 5 min; user‑adjustable 5 / 10 min).
+* Red wedge shrinks smoothly; prompt: “Take this time to journal your reflections.”
+
+#### 5. Completion Flow
+
+* CTA: **“I’m Done Journaling”** unlocks on timer finish.
+* Triggers Shine radial glow + affirmation (e.g., “You honored your thoughts today.”).
+* Post‑ritual summary card shows:
+
+  * 🔥 Streak continuation status
+  * 📊 Say/Do Ratio (task + goal tracking)
+  * Encouraging insight line.
+
+### Core Prompts
+
+1. What am I grateful for today?
+2. How can I improve?
+3. What did I learn today?
+4. Did I give my best today?
+
+### Timer Functionality
+
+5‑ or 10‑minute Time‑Timer countdown; mirrors Rise & Shine interaction.
+
+### Progress Tracking
+
+Session completion logs under *shutdown* ritual type; streak updates. Uses a cool calming colour palette.
+
+### Implementation Notes
+
+Shares component template with Rise & Shine (timer, toggle buttons, card container). Only prompt set, colour theme, and insight data differ.
+
+### 📐 Text‑Only Wireframe
+
+```
+──────────────────────────────────────────
+🌓  Evening Ritual  (title bar / header)
+──────────────────────────────────────────
+
+┌────────────────────────────────────────┐
+│  TOP CARD (dynamic)                    │
+│                                        │
+│  • Default: Reflection Prompts         │
+│      1. What am I grateful for today?  │
+│      2. How can I improve?             │
+│      3. What did I learn today?        │
+│      4. Did I give my best today?      │
+│      5. “From your day…” (optional)    │
+│                                        │
+│  • Toggled: Deep‑Work / Tasks / Mood   │
+│    insights (content swaps same card)  │
+└────────────────────────────────────────┘
+
+              ▼  (8 px spacer)
+┌─────────────── INSIGHT TOGGLES ───────────────┐
+│  🧠 Deep Work   ✅ Tasks Done   💖 Feeling Mood │
+└───────────────────────────────────────────────┘
+              ▼  (12 px spacer)
+       ⏳  CIRCULAR TIME‑TIMER (SVG)
+       ──────────────────────────────
+       • Red wedge shrinks clockwise
+       • mm:ss read‑out below/inside
+       • Slider / crown adjusts 5↔10m
+       ──────────────────────────────
+              ▼  (20 px spacer)
+┌────────────────────────────────────────┐
+│  “I’M DONE JOURNALING”  (CTA button)   │
+│  • Disabled until timer = 0            │
+└────────────────────────────────────────┘
+              ▼  (post‑ritual overlay)
+┌────────────────────────────────────────┐
+│  🌟  Shine Affirmation & Summary Card  │
+│  🔥 Streak count   📊 Say/Do Ratio     │
+└────────────────────────────────────────┘
+──────────────────────────────────────────
+```
+
+### Suggested Visual Hierarchy & Sizing
+
+* **Top Card** – \~40 % of screen height; displays prompts or insight stats.
+* **Toggle Strip** – fixed 48 px height; equal‑width buttons with haptic feedback.
+* **Time‑Timer** – \~30 % of screen height; dominant visual focus for countdown.
+* **CTA Button** – 56–64 px height; full‑width, rounded corners.
+* **Summary Overlay** – auto height; slides up post‑ritual, contains affirmation and metrics.
+
+## Streak Tracking (Local) (Local)
+
+* **What it does**: Records ritual completions and calculates consecutive‑day streaks per ritual type.
+* **Why it's important**: Uses behavioural reinforcement to motivate consistent practice.
+* **How it works**: On successful ritual completion, the date is persisted in `AsyncStorage`; streak counters are recalculated and surfaced in UI badges.
+
+## Placeholder Reviews
+
+* **What it does**: Shows disabled cards for Weekly and Monthly Review with “Coming Soon” messaging.
+* **Why it's important**: Communicates product roadmap and gauges interest without over‑scoping MVP.
+* **How it works**: PlanOptionCards are rendered with distinct opacity; taps trigger a toast indicating availability in a future update.
+
+# User Experience
+
+## Personas
+
+* **Focused Founder** – busy entrepreneur needing morning clarity & nightly shut‑down.
+* **Mindful Maker** – creative who values ritualised reflection.
+* **Busy Parent** – juggles commitments; needs simple, guided planning blocks.
+
+## Key Flows
+
+1. **Launch Plan Hub**
+   ‑ User taps *Plan* icon in bottom nav → modal slides up with 4 cards.
+2. **Morning Ritual (Rise and Shine)**
+   ‑ Tap card → ritual screen shows title, tappable timer, questions, disabled CTA.
+   ‑ Timer completes (5 min) → haptic; CTA enabled → tap → ritual logged → streak++ → navigates to deepWorkScreen2.
+3. **Evening Ritual (Shutdown)**
+   ‑ Similar flow with evening prompts & cooldown palette.
+4. **Placeholder Reviews**
+   ‑ Tapping shows “Coming Soon” toast / disabled overlay.
+
+## UI/UX Considerations
+
+* Modal grid 2×2 with large icons, titles, micro‑copy; swipe down or tap outside to dismiss.
+* Colour cues: warm energising for Rise & Shine, cool calming for Shutdown.
+* Smooth spring animations; haptic on option select and ritual completion.
+* Accessibility: 44 px touch targets, VoiceOver labels.
+
+# Technical Architecture
+
+## System Components
+
+* **BottomTabNavigator**: replaces old *DeepWorkScreen1* entry with *Plan*.
+* **PlanModal**: React‑Native Modal rendering grid of PlanOptionCards.
+* **PlanOptionCard**: reusable card component with icon, title, state (active/disabled).
+* **RiseAndShineScreen** (`Screen1.js` + `FocusTimer`, `QuestionsCard`, `PrimaryButton`).
+* **ShutdownScreen** (reuse Rise template; inject prompt set + theme props).
+* **StreakManager**: local storage util (per‑ritual streak + global stats).
+
+## Data Models
+
+```json
+{
+  "rituals": {
+    "rise": {"history": ["2025‑06‑20"], "streak": 3, "longest": 5},
+    "shutdown": {"history": ["2025‑06‑19"], "streak": 1, "longest": 3}
+  }
+}
+```
+
+## APIs / Integrations
+
+* **Local MVP**: `AsyncStorage` only.
+* **Future**: Firebase / MongoDB sync for multi‑device continuity.
+
+## Infrastructure Requirements
+
+* Expo SDK (RN 0.79 / Expo 53), `react‑native‑svg`, `expo‑haptics`, `@react‑navigation` modals.
+* No backend infra for Phase 1.
+
+# Development Roadmap
+
+### Phase 1 — MVP
+
+* Replace tab icon; implement PlanModal grid (Rise, Shutdown, Weekly, Monthly).
+* Build Rise & Shine screen with timer + prompts + local streak storage.
+* Build Shutdown screen (reuse components; new prompts/colours).
+* Disabled placeholders for Weekly / Monthly; “Coming Soon”.
+
+### Phase 2 — Enhancements
+
+* Add analytics hooks (ritual duration, completion rate).
+* Configurable timer lengths (3/5/10 min).
+* Guided audio option.
+* Simple streak badge visuals in modal cards.
+
+### Phase 3 — Extended Reviews
+
+* Implement Weekly and Monthly Review flows (separate PRDs).
+* Backend sync + multi‑device streaks.
+* Calendar visualisation, deeper insights.
+
+# Logical Dependency Chain
+
+1. **Tab replacement & PlanModal skeleton** (foundation; visible quickly).
+2. **Rise & Shine screen** (reuses existing code; first usable ritual).
+3. **StreakManager** local logic.
+4. **Shutdown screen** (mirrors Rise; minimal additional lift).
+5. **UI polish & haptics**.
+6. **Phase 2 feature toggles** (timer config, audio).
+7. **Review modules + backend**.
+
+# Risks & Mitigations
+
+## Performance of SVG Timer
+
+* **Risk**: Intensive SVG arc animation may cause jank on low‑end devices.
+* **Impact**: Degraded user experience and lower engagement.
+* **Mitigation**: Use lightweight `react‑native‑svg`, throttle frame updates, and profile with Flipper.
+
+## Scope Creep into Weekly / Monthly Review
+
+* **Risk**: Expanding review features too early.
+* **Impact**: Delays MVP delivery and dilutes focus.
+* **Mitigation**: Keep Weekly / Monthly cards as “Coming Soon” placeholders; enforce feature flags for any new work.
+
+## AsyncStorage Corruption / Data Loss
+
+* **Risk**: Local data store may be cleared or corrupted by OS or app updates.
+* **Impact**: Streaks reset; user trust erodes.
+* **Mitigation**: Implement defensive reads/writes, add unit tests, and introduce optional cloud backup in Phase 3.
+
+## Resource Constraints
+
+* **Risk**: Limited engineering bandwidth and potential knowledge gaps with React Native + Expo.
+* **Impact**: Slower development and rushed QA.
+* **Mitigation**: Prioritise MVP scope, reuse shared components, and ship in small atomic pull requests.
+
+# Appendix
+
+* Prompt sets (morning & evening)
+* Colour palette values
+* Icon references (Sun, Moon, Calendar)
+* Animation durations / easings
