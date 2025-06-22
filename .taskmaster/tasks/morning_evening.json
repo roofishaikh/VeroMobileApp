@@ -14,7 +14,7 @@
       "name": "Plan Modal Implementation",
       "description": "Create PlanModal with 2x2 grid, PlanOptionCards, navigation, accessibility, color cues, and disabled placeholders.",
       "priority": "highest",
-      "status": "pending",
+      "status": "in_progress",
       "subtasks": [
         { "name": "Create PlanModal component", "description": "React-Native Modal with 2x2 grid of PlanOptionCards.", "priority": "high", "status": "pending" },
         {

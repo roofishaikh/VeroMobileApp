@@ -74,7 +74,7 @@ function CardStack() {
         { text: 'Subtask 2', done: false },
       ],
     };
-    setGoals([...goals, newGoal]);
+    setGoals([newGoal, ...goals]);
   };
 
   return (

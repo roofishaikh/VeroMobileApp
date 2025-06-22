@@ -117,7 +117,7 @@
         {
           "name": "Fix Focus Nav Bar Double Press Issue",
           "description": "Focus nav bar button requires double press to show deep work screen. Fix navigation to respond to single press.",
-          "status": "pending",
+          "status": "done",
           "priority": "highest",
           "dependencies": []
         },

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import PlanModal from '../components/PlanModal';
+import PlanModal from './DeepWorkScreens/PlanScreens/PlanModal' 
 import GradientScreenWrapper from '../components/GradientScreenWrapper';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -16,10 +16,9 @@ function PlanScreen() {
   return (
     <GradientScreenWrapper>
       <View style={styles.container}>
-        <PlanModal 
-          visible={showModal} 
-          onClose={() => setShowModal(false)} 
-        />
+        {showModal && (
+          <PlanModal onClose={() => setShowModal(false)} />
+        )}
       </View>
     </GradientScreenWrapper>
   );

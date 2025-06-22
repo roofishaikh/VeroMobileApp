@@ -15,6 +15,7 @@ import CheckInScreen1 from './screens/CheckInScreens/CheckInScreen1';
 import DeepWorkSummary from './screens/DeepWorkScreens/DeepWorkSummary';
 import HabitTracker from './screens/InsightsScreens/HabitTracker';
 import DeepWorkCompleteScreen from './screens/DeepWorkScreens/DeepWorkCompleteScreen';
+import PlanModal from './screens/DeepWorkScreens/PlanScreens/PlanModal';
 
 // Icons
 import Plan from './assets/icons/plan.svg';

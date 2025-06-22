@@ -1,25 +1,25 @@
 import React from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
-import PrimaryButton from "../../components/primaryButton";
-import GradientScreenWrapper from "../../components/GradientScreenWrapper";
-import Screen1QuestiosCard from "../../components/Screen1QuestiosCard";
-import TimeTimer from "../../components/TimeTimer";
+import { View, StyleSheet, Text, Dimensions } from "react-native";
+import GradientScreenWrapper from "../../../components/GradientScreenWrapper";
+import TimeTimer from "../../../components/TimeTimer";
+import PrimaryButton from "../../../components/primaryButton";
+import Screen1QuesionsCard from "../../../components/Screen1QuestiosCard";
+
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
-function DeepWorkScreen1() {
-  const title = 'plan to rise and shine';
+function ShutdownScreen() { const title = 'Evening Rituals';
   const questions = [
     '1. What am I grateful for today?',
-    '2. What am I avoiding?',
-    '3. What am I excieted about today?',
-    '4. What is one thing i must accomplish today?',
+    '2. How can I improve?',
+    '3. What did I learn today?',
+    '4. Did I give my best today?',
   ];
 
   return (
     <GradientScreenWrapper>
       <View style={styles.container}>
-        <Screen1QuestiosCard title={title} questions={questions} />
+        <Screen1QuesionsCard title={title} questions={questions} />
         <View style={styles.timerWrapper}>
           <TimeTimer />
         </View>
@@ -55,6 +55,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DeepWorkScreen1;
-
-
+export default ShutdownScreen; 

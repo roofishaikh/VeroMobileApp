@@ -1,10 +1,13 @@
 import React from 'react';
-import { View, Text, StyleSheet, Modal, Pressable, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import GradientScreenWrapper from '../../../components/GradientScreenWrapper';
+
+
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
-function PlanModal({ visible, onClose }) {
+function PlanModal({ onClose = () => {} }) {
   const navigation = useNavigation();
 
   const planningOptions = [
@@ -14,12 +17,7 @@ function PlanModal({ visible, onClose }) {
       onPress: () => {
         console.log('Navigating to DeepScreen1');
         onClose();
-        navigation.navigate('HomeTabs', {
-          screen: 'Plan',
-          params: {
-            screen: 'DeepScreen1'
-          }
-        });
+        navigation.navigate('DeepScreen1');
       }
     },
     {
@@ -28,7 +26,7 @@ function PlanModal({ visible, onClose }) {
       onPress: () => {
         console.log('Shutdown pressed');
         onClose();
-        // TODO: Navigate to Shutdown screen when implemented
+        navigation.navigate('ShutdownScreen');
       }
     },
     {
@@ -37,7 +35,7 @@ function PlanModal({ visible, onClose }) {
       onPress: () => {
         console.log('Weekly Review pressed');
         onClose();
-        // TODO: Navigate to Weekly Review when implemented
+        navigation.navigate('WeeklyReviewScreen');
       }
     },
     {
@@ -46,21 +44,13 @@ function PlanModal({ visible, onClose }) {
       onPress: () => {
         console.log('Monthly Review pressed');
         onClose();
-        // TODO: Navigate to Monthly Review when implemented
+        navigation.navigate('MonthlyReviewScreen');
       }
     }
   ];
 
   return (
-    <Modal
-      animationType="slide"
-      transparent={true}
-      visible={visible}
-      onRequestClose={() => {
-        console.log('Modal requested close');
-        onClose();
-      }}
-    >
+    <GradientScreenWrapper>
       <Pressable 
         style={styles.overlay} 
         onPress={() => {
@@ -84,16 +74,22 @@ function PlanModal({ visible, onClose }) {
           </View>
         </View>
       </Pressable>
-    </Modal>
+    </GradientScreenWrapper>
   );
 }
 
 const styles = StyleSheet.create({
   overlay: {
-    flex: 1,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
+    zIndex: 100,
+    marginBottom: 0,
   },
   modalContent: {
     backgroundColor: 'white',
