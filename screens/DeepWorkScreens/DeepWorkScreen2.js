@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import ConfettiCannon from 'react-native-confetti-cannon';
 import { View, StyleSheet, Pressable, Text, Dimensions, TextInput,
 TouchableWithoutFeedback, Keyboard, ScrollView, Alert } from "react-native";
@@ -76,6 +76,22 @@ function DeepWorkScreen2({ navigation }) {
   // Animated values for pile animations
   const leftPileScale = useSharedValue(1);
   const rightPileScale = useSharedValue(1);
+
+  // TIMER STATE
+  const timerRef = useRef();
+  const [timerState, setTimerState] = useState({
+    isRunning: false,
+    isPaused: false,
+    isDragging: false,
+    timeLeft: 0,
+    totalTime: 0,
+    previewTime: 0,
+    timeSet: false,
+  });
+  // For PrimaryButton text
+  const [buttonText, setButtonText] = useState("START DEEP WORK");
+  // Track if long press is active
+  const [longPressActive, setLongPressActive] = useState(false);
 
   // Persistence functions
   const saveGoalsToStorage = async (goalsData) => {
@@ -342,6 +358,73 @@ function DeepWorkScreen2({ navigation }) {
     });
   };
 
+  // Helper: format seconds to hh:mm:ss
+  const formatTime = (seconds) => {
+    const totalSeconds = Math.max(0, Math.round(seconds));
+    const h = Math.floor(totalSeconds / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = totalSeconds % 60;
+    return [h, m, s].map((v) => v.toString().padStart(2, '0')).join(":");
+  };
+
+  // TimeTimer callbacks
+  const handleTimerDrag = ({ minutes }) => {
+    setTimerState((prev) => ({ ...prev, isDragging: true, previewTime: minutes * 60 }));
+    setButtonText(formatTime(minutes * 60));
+  };
+  const handleTimerSet = ({ minutes, seconds }) => {
+    setTimerState((prev) => ({ ...prev, isDragging: false, totalTime: seconds, timeLeft: seconds, timeSet: true }));
+    setButtonText("START DEEP WORK");
+  };
+  const handleTimerTick = (secondsLeft) => {
+    setTimerState((prev) => ({ ...prev, timeLeft: secondsLeft }));
+  };
+  const handleTimerStart = (isRunning) => {
+    console.log('DeepWorkScreen2: handleTimerStart called with isRunning:', isRunning);
+    setTimerState((prev) => ({ ...prev, isRunning, isPaused: false }));
+  };
+  const handleTimerPause = (isPaused) => {
+    console.log('DeepWorkScreen2: handleTimerPause called with isPaused:', isPaused);
+    setTimerState((prev) => ({ ...prev, isPaused }));
+  };
+
+  // Button tap logic
+  const handlePrimaryButtonTap = () => {
+    console.log('Button tapped!', {
+      isDragging: timerState.isDragging,
+      timeSet: timerState.timeSet,
+      totalTime: timerState.totalTime,
+      isRunning: timerState.isRunning,
+      isPaused: timerState.isPaused
+    });
+    
+    if (timerState.isDragging) return; // Ignore tap while dragging
+    if (!timerState.timeSet || timerState.totalTime === 0) return; // Ignore if no time set
+    
+    if (!timerState.isRunning && !timerState.isPaused) {
+      console.log('Starting timer...');
+      timerRef.current?.start();
+    } else if (timerState.isPaused) {
+      console.log('Resuming timer...');
+      timerRef.current?.resume();
+    } else if (timerState.isRunning) {
+      console.log('Pausing timer...');
+      timerRef.current?.pause();
+    }
+  };
+  // Long press logic
+  const handlePrimaryButtonLongPress = () => {
+    setLongPressActive(true);
+    setTimeout(() => {
+      setLongPressActive(false);
+      // End session and navigate as before
+      navigation.navigate("DeepWorkScreen3");
+    }, 3000);
+  };
+  const handlePrimaryButtonLongPressEnd = () => {
+    setLongPressActive(false);
+  };
+
   return (
     <GradientScreenWrapper>
       {isLoading ? (
@@ -388,14 +471,32 @@ function DeepWorkScreen2({ navigation }) {
       {/* Timer and controls, centered and spaced */}
       <View style={styles.timerControlsContainer}>
         <View style={styles.timerWrapper}>
-          <TimeTimer />
+          <TimeTimer
+            ref={timerRef}
+            isRunning={timerState.isRunning}
+            isPaused={timerState.isPaused}
+            onDrag={handleTimerDrag}
+            onSet={handleTimerSet}
+            onTick={handleTimerTick}
+            onStart={handleTimerStart}
+            onPause={handleTimerPause}
+            initialMinutes={25}
+          />
         </View>
       </View>
 
       <View style={styles.buttonWrapper}>
-        <PrimaryButton onPress={handleStartStop}>
-          {showStopwatchCard ? "STOP" : "START DEEP WORK"}
-        </PrimaryButton>
+        <PrimaryButton
+          text={buttonText}
+          altText={"TAP TO PAUSE / LONG PRESS TO END"}
+          timerText={formatTime(timerState.isDragging ? timerState.previewTime : timerState.timeLeft)}
+          isRunning={timerState.isRunning}
+          isPaused={timerState.isPaused}
+          isDragging={timerState.isDragging}
+          onTap={handlePrimaryButtonTap}
+          onLongPress={handlePrimaryButtonLongPress}
+          onLongPressEnd={handlePrimaryButtonLongPressEnd}
+        />
       </View>
       {showConfetti && (
         <ConfettiCannon

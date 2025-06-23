@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useCallback } from 'react';
+import React, { useRef, useState, useEffect, useCallback, forwardRef, useImperativeHandle } from 'react';
 import { View, Text, StyleSheet, PanResponder, Pressable, Animated, Dimensions } from 'react-native';
 import Svg, { Path, Circle, Line, Text as SvgText } from 'react-native-svg';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -125,10 +125,27 @@ const renderNumbers = () => {
   return numbers;
 };
 
-const TimeTimer = () => {
-  const [totalMinutes, setTotalMinutes] = useState(25);
-  const [minutesLeft, setMinutesLeft] = useState(0);
-  const [isRunning, setIsRunning] = useState(false);
+// Accept props for controlled timer
+const TimeTimer = forwardRef(({
+  isRunning: externalIsRunning = false,
+  isPaused: externalIsPaused = false,
+  onDrag = () => {},
+  onSet = () => {},
+  onStart = () => {},
+  onPause = () => {},
+  onEnd = () => {},
+  onTick = () => {},
+  start,
+  pause,
+  resume,
+  reset,
+  initialMinutes = 25,
+}, ref) => {
+  // Use seconds for all countdown logic
+  const [totalSeconds, setTotalSeconds] = useState(initialMinutes * 60);
+  const [secondsLeft, setSecondsLeft] = useState(0);
+  const [isRunning, setIsRunning] = useState(externalIsRunning);
+  const [isPaused, setIsPaused] = useState(externalIsPaused);
   const [isDragging, setIsDragging] = useState(false);
   const [dragAngle, setDragAngle] = useState(null);
   const [previewMinutes, setPreviewMinutes] = useState(null);
@@ -159,38 +176,39 @@ const TimeTimer = () => {
     const minutes = Math.max(1, Math.round((clampedAngle / 360) * MINUTES_MAX));
     setPreviewMinutes(minutes);
     previewMinutesRef.current = minutes;
-  }, []);
+    onDrag({ minutes, angle: clampedAngle });
+  }, [onDrag]);
 
-  // Timer countdown effect (minutes only)
+  // Timer countdown effect (seconds)
   useEffect(() => {
-    if (isRunning && minutesLeft > 0) {
+    if (isRunning && secondsLeft > 0 && !isPaused) {
       intervalRef.current = setInterval(() => {
-        setMinutesLeft((prev) => {
+        setSecondsLeft((prev) => {
           if (prev <= 1) {
             clearInterval(intervalRef.current);
             setIsRunning(false);
+            onEnd();
             return 0;
           }
           return prev - 1;
         });
-      }, 60000); // 1 minute interval
+      }, 1000); // 1 second interval
     } else {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
     }
-    
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
     };
-  }, [isRunning, minutesLeft]);
+  }, [isRunning, secondsLeft, isPaused]);
 
-  // Calculate progress and arc (minutes only)
-  const progress = minutesLeft / totalMinutes;
+  // Calculate progress and arc (seconds)
+  const progress = totalSeconds > 0 ? secondsLeft / totalSeconds : 0;
   
   // Use drag angle when dragging, set angle when not dragging but time was set by drag, otherwise use progress
   let currentProgress;
@@ -208,6 +226,15 @@ const TimeTimer = () => {
   // Create the arc path (centered with OUTER_PADDING)
   const arcPath = createTimerArc(CENTER + OUTER_PADDING, CENTER + OUTER_PADDING, RADIUS, currentProgress);
 
+  // On set, call onSet
+  const handleSet = (minutes, angle) => {
+    const secs = Math.max(1, Math.round(minutes * 60));
+    setTotalSeconds(secs);
+    setSecondsLeft(secs);
+    setSetAngle(angle);
+    onSet({ minutes, seconds: secs, angle });
+  };
+
   // Drag to set time - improved pan responder
   const panResponder = useRef(
     PanResponder.create({
@@ -222,14 +249,8 @@ const TimeTimer = () => {
       },
       onPanResponderRelease: (evt, gestureState) => {
         setIsDragging(false);
-        // Use ref values instead of state values
         if (dragAngleRef.current !== null && previewMinutesRef.current !== null) {
-          setTotalMinutes(previewMinutesRef.current);
-          setMinutesLeft(previewMinutesRef.current);
-          // Store the angle where the time was set
-          setSetAngle(dragAngleRef.current);
-          // Start the timer automatically
-          setIsRunning(true);
+          handleSet(previewMinutesRef.current, dragAngleRef.current);
         }
         setPreviewMinutes(null);
         setDragAngle(null);
@@ -246,23 +267,55 @@ const TimeTimer = () => {
     })
   ).current;
 
-  // Timer display (minutes only)
-  const displayMinutes = isDragging && previewMinutes !== null
-    ? previewMinutes
-    : minutesLeft;
+  // Timer display (seconds)
+  const displaySeconds = isDragging && previewMinutes !== null
+    ? Math.round(previewMinutes * 60)
+    : secondsLeft;
 
-  // Debug logging (remove in production)
-  useEffect(() => {
-    console.log('Timer State:', {
-      totalMinutes,
-      minutesLeft,
-      isRunning,
-      isDragging,
-      setAngle: setAngle?.toFixed(2),
-      progress: progress.toFixed(2),
-      currentProgress: currentProgress.toFixed(2)
-    });
-  }, [totalMinutes, minutesLeft, isRunning, isDragging, setAngle, progress, currentProgress]);
+  // Expose imperative methods to parent
+  useImperativeHandle(ref, () => ({
+    start: () => {
+      setIsRunning(true);
+    },
+    pause: () => {
+      setIsPaused(true);
+    },
+    resume: () => {
+      setIsPaused(false);
+      // Small delay to ensure isPaused state is updated before setting isRunning
+      setTimeout(() => {
+        setIsRunning(true);
+      }, 10);
+    },
+    reset: () => {
+      setIsRunning(false);
+      setIsPaused(false);
+      setSecondsLeft(0);
+      setTotalSeconds(initialMinutes * 60);
+    },
+    setTime: (minutes) => {
+      const secs = Math.max(1, Math.round(minutes * 60));
+      setTotalSeconds(secs);
+      setSecondsLeft(secs);
+    },
+    getTime: () => ({ secondsLeft, totalSeconds }),
+    isRunning: () => isRunning,
+    isPaused: () => isPaused,
+    isDragging: () => isDragging,
+  }));
+
+  // Callbacks to parent
+  useEffect(() => { onTick(secondsLeft); }, [secondsLeft]);
+  useEffect(() => { onStart(isRunning); }, [isRunning]);
+  useEffect(() => { onPause(isPaused); }, [isPaused]);
+
+  // Use external isRunning/isPaused if provided
+  useEffect(() => { 
+    setIsRunning(externalIsRunning); 
+  }, [externalIsRunning]);
+  useEffect(() => { 
+    setIsPaused(externalIsPaused); 
+  }, [externalIsPaused]);
 
   return (
     <View style={styles.container}>
@@ -298,15 +351,13 @@ const TimeTimer = () => {
         </Svg>
         {/* Timer value in center */}
         <View style={[styles.centerText, { left: OUTER_PADDING, right: OUTER_PADDING }]} pointerEvents="none">
-          {/* <Text style={styles.timerValue}>
-            {displayMinutes.toString().padStart(2, '0')}:{displaySeconds.toString().padStart(2, '0')}
-          </Text> */}
           <Text style={styles.timerLabel}>{isRunning ? 'RUNNING' : isDragging ? 'SET TIME' : 'READY'}</Text>
         </View>
       </View>
     </View>
   );
-};
+});
+TimeTimer.displayName = 'TimeTimer';
 
 const styles = StyleSheet.create({
   container: {
