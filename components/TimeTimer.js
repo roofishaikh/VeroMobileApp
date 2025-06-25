@@ -140,6 +140,7 @@ const TimeTimer = forwardRef(({
   resume,
   reset,
   initialMinutes = 25,
+  locked = false, // New prop to disable dragging
 }, ref) => {
   // Use seconds for all countdown logic
   const [totalSeconds, setTotalSeconds] = useState(initialMinutes * 60);
@@ -159,6 +160,8 @@ const TimeTimer = forwardRef(({
 
   // Memoized drag handler to prevent recreation on every render
   const handleDrag = useCallback((nativeEvent) => {
+    if (locked) return; // Don't allow dragging if locked
+    
     const { locationX, locationY } = nativeEvent;
     // Calculate position relative to the center of the timer
     const dx = locationX - CENTER;
@@ -177,7 +180,7 @@ const TimeTimer = forwardRef(({
     setPreviewMinutes(minutes);
     previewMinutesRef.current = minutes;
     onDrag({ minutes, angle: clampedAngle });
-  }, [onDrag]);
+  }, [onDrag, locked]);
 
   // Timer countdown effect (seconds)
   useEffect(() => {
@@ -238,16 +241,19 @@ const TimeTimer = forwardRef(({
   // Drag to set time - improved pan responder
   const panResponder = useRef(
     PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: () => true,
+      onStartShouldSetPanResponder: () => !locked,
+      onMoveShouldSetPanResponder: () => !locked,
       onPanResponderGrant: (evt, gestureState) => {
+        if (locked) return;
         setIsDragging(true);
         handleDrag(evt.nativeEvent);
       },
       onPanResponderMove: (evt, gestureState) => {
+        if (locked) return;
         handleDrag(evt.nativeEvent);
       },
       onPanResponderRelease: (evt, gestureState) => {
+        if (locked) return;
         setIsDragging(false);
         if (dragAngleRef.current !== null && previewMinutesRef.current !== null) {
           handleSet(previewMinutesRef.current, dragAngleRef.current);
@@ -258,6 +264,7 @@ const TimeTimer = forwardRef(({
         previewMinutesRef.current = null;
       },
       onPanResponderTerminate: () => {
+        if (locked) return;
         setIsDragging(false);
         setPreviewMinutes(null);
         setDragAngle(null);
@@ -297,6 +304,16 @@ const TimeTimer = forwardRef(({
       const secs = Math.max(1, Math.round(minutes * 60));
       setTotalSeconds(secs);
       setSecondsLeft(secs);
+    },
+    setInitialAngle: (minutes) => {
+      // Calculate the angle for the given minutes on a 60-minute circle
+      const angle = (minutes / 60) * 360;
+      setSetAngle(angle);
+      // Set the timer to have 60 minutes total but start with the specified minutes remaining
+      const totalSecs = 60 * 60; // 60 minutes in seconds
+      const remainingSecs = minutes * 60; // specified minutes in seconds
+      setTotalSeconds(totalSecs);
+      setSecondsLeft(remainingSecs);
     },
     getTime: () => ({ secondsLeft, totalSeconds }),
     isRunning: () => isRunning,
@@ -351,7 +368,9 @@ const TimeTimer = forwardRef(({
         </Svg>
         {/* Timer value in center */}
         <View style={[styles.centerText, { left: OUTER_PADDING, right: OUTER_PADDING }]} pointerEvents="none">
-          <Text style={styles.timerLabel}>{isRunning ? 'RUNNING' : isDragging ? 'SET TIME' : 'READY'}</Text>
+          <Text style={styles.timerLabel}>
+            {isRunning ? 'RUNNING' : isDragging ? 'SET TIME' : locked ? 'LOCKED' : 'READY'}
+          </Text>
         </View>
       </View>
     </View>
