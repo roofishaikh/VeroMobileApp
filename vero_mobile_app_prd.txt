@@ -1,0 +1,222 @@
+<context>
+# Overview  
+Vero Mobile App is a comprehensive productivity and wellness application designed to help users manage their goals, track deep work sessions, and maintain healthy habits. The app combines goal management with time tracking and habit formation to create a holistic approach to personal productivity and mental well-being.
+
+The app solves the problem of fragmented productivity tools by providing an integrated solution that combines:
+- Goal setting and tracking with subgoals
+- Deep work session management with timers
+- Habit tracking and wellness check-ins
+- Visual progress tracking through card-based interfaces
+
+Target users are professionals, students, and anyone seeking to improve their productivity and maintain work-life balance through structured goal management and focused work sessions.
+
+# Core Features  
+
+## 1. Goal Management System
+- **Swipable Goal Cards**: Interactive card-based interface for managing goals
+- **Subgoal Support**: Break down main goals into actionable subgoals
+- **Goal Validation**: Real-time validation for goal titles and subgoals
+- **Goal Persistence**: Local storage for goal data persistence
+- **Goal Reordering**: Drag-and-drop functionality for subgoal organization
+
+## 2. Deep Work Timer System
+- **Customizable Timer**: Set custom work session durations
+- **Timer Controls**: Start, pause, and end session functionality
+- **Visual Timer Display**: Real-time countdown with visual feedback
+- **Session Tracking**: Track completed deep work sessions
+- **Timer Persistence**: Save timer state across app sessions
+
+## 3. Habit Tracking
+- **Habit Tracker**: Track daily habits and routines
+- **Progress Visualization**: Visual representation of habit completion
+- **Streak Tracking**: Monitor consecutive days of habit completion
+- **Habit Categories**: Organize habits by type (morning, evening, etc.)
+
+## 4. Check-in System
+- **Mood Check-ins**: Track emotional state and well-being
+- **Progress Reviews**: Regular assessment of goal progress
+- **Reflection Prompts**: Guided reflection on productivity and habits
+- **Data Visualization**: Charts and graphs showing trends over time
+
+## 5. Navigation and UI
+- **Bottom Navigation**: Easy access to main app sections
+- **Gradient Backgrounds**: Modern, visually appealing design
+- **Responsive Layout**: Adapts to different screen sizes
+- **Smooth Animations**: Enhanced user experience with animations
+
+# User Experience  
+
+## User Personas
+1. **The Busy Professional**: Needs to manage multiple projects and maintain focus during work sessions
+2. **The Student**: Wants to track study goals and maintain healthy study habits
+3. **The Wellness Seeker**: Focuses on habit formation and mental well-being
+
+## Key User Flows
+1. **Goal Setting Flow**: Create new goal → Add subgoals → Set validation rules → Start tracking
+2. **Deep Work Flow**: Select goal → Set timer → Start session → Complete session → Log progress
+3. **Habit Tracking Flow**: View habits → Mark completion → Track streaks → Review progress
+4. **Check-in Flow**: Open app → Complete mood check → Review goals → Update progress
+
+## UI/UX Considerations
+- **Card-based Design**: Intuitive swiping interface for goal management
+- **Visual Feedback**: Clear indicators for completion states and progress
+- **Accessibility**: Support for different screen sizes and accessibility features
+- **Performance**: Smooth animations and responsive interactions
+</context>
+<PRD>
+# Technical Architecture  
+
+## System Components
+- **React Native Core**: Cross-platform mobile application framework
+- **Expo SDK**: Development tools and native module access
+- **Navigation**: React Navigation for screen management
+- **State Management**: React hooks for local state management
+- **Storage**: Expo SecureStore for local data persistence
+- **Animations**: React Native Reanimated for smooth animations
+
+## Data Models
+```javascript
+// Goal Model
+{
+  id: number,
+  text: string,
+  isCompleted: boolean,
+  subgoals: Array<{
+    id: number,
+    text: string,
+    isCompleted: boolean
+  }>
+}
+
+// Timer State Model
+{
+  isRunning: boolean,
+  isPaused: boolean,
+  timeLeft: number,
+  totalTime: number,
+  timeSet: boolean
+}
+
+// Habit Model
+{
+  id: number,
+  title: string,
+  category: string,
+  streak: number,
+  completedDates: Array<Date>
+}
+```
+
+## APIs and Integrations
+- **Local Storage**: Expo SecureStore for data persistence
+- **Device APIs**: Access to device features through Expo modules
+- **Future Integrations**: Potential for cloud sync and social features
+
+## Infrastructure Requirements
+- **Development**: Expo development environment
+- **Testing**: React Native testing framework
+- **Deployment**: Expo Application Services (EAS) for app store deployment
+
+# Development Roadmap  
+
+## Phase 1: Core Goal Management (MVP)
+- [x] Basic goal creation and editing
+- [x] Subgoal support with validation
+- [x] Swipable card interface
+- [x] Local data persistence
+- [x] Goal reordering functionality
+
+## Phase 2: Timer and Deep Work Features
+- [x] Customizable timer implementation
+- [x] Timer controls (start, pause, end)
+- [x] Visual timer display
+- [x] Session completion tracking
+- [x] Timer state persistence
+
+## Phase 3: Habit Tracking System
+- [ ] Habit creation and management
+- [ ] Daily habit tracking interface
+- [ ] Streak calculation and display
+- [ ] Habit categories and organization
+- [ ] Progress visualization
+
+## Phase 4: Check-in and Wellness Features
+- [ ] Mood check-in system
+- [ ] Progress review functionality
+- [ ] Reflection prompts and journaling
+- [ ] Data visualization and charts
+- [ ] Wellness insights and recommendations
+
+## Phase 5: Advanced Features and Polish
+- [ ] Cloud synchronization
+- [ ] Social features and sharing
+- [ ] Advanced analytics and insights
+- [ ] Customization options
+- [ ] Performance optimizations
+
+# Logical Dependency Chain
+
+## Foundation Layer (Must be built first)
+1. **Data Models and Storage**: Define core data structures and persistence
+2. **Navigation System**: Set up app navigation and screen management
+3. **Basic UI Components**: Create reusable UI components and styling
+
+## Core Functionality Layer
+1. **Goal Management**: Implement goal creation, editing, and persistence
+2. **Timer System**: Build timer functionality and session tracking
+3. **Habit Tracking**: Develop habit management and tracking features
+
+## Enhancement Layer
+1. **Check-in System**: Add wellness and progress tracking features
+2. **Data Visualization**: Implement charts and progress displays
+3. **Advanced Features**: Add social features and cloud sync
+
+## Polish Layer
+1. **Performance Optimization**: Optimize animations and app performance
+2. **User Experience**: Refine UI/UX and add accessibility features
+3. **Testing and Quality Assurance**: Comprehensive testing and bug fixes
+
+# Risks and Mitigations  
+
+## Technical Challenges
+- **Risk**: Complex state management with multiple interconnected features
+- **Mitigation**: Use React hooks effectively and maintain clear data flow patterns
+
+- **Risk**: Performance issues with animations and real-time updates
+- **Mitigation**: Optimize animations using React Native Reanimated and implement proper memoization
+
+- **Risk**: Data persistence and synchronization across app sessions
+- **Mitigation**: Implement robust error handling and data validation
+
+## MVP Scope Management
+- **Risk**: Feature creep and over-engineering
+- **Mitigation**: Focus on core functionality first, iterate based on user feedback
+
+- **Risk**: Complex UI interactions affecting usability
+- **Mitigation**: User testing and iterative design improvements
+
+## Resource Constraints
+- **Risk**: Limited development time and resources
+- **Mitigation**: Prioritize features based on user value and technical complexity
+
+# Appendix  
+
+## Research Findings
+- Card-based interfaces improve user engagement and task completion
+- Timer-based work sessions increase focus and productivity
+- Habit tracking with visual feedback improves habit formation
+- Regular check-ins and reflection improve goal achievement
+
+## Technical Specifications
+- **Platform**: React Native with Expo
+- **Minimum SDK**: iOS 13+, Android API 21+
+- **Target Devices**: Smartphones and tablets
+- **Offline Support**: Full offline functionality with local storage
+- **Performance Targets**: Smooth 60fps animations, <2s app startup time
+
+## Design Guidelines
+- **Color Scheme**: Green (#4CAF50) for success, Red (#F45B47) for actions, Blue (#2196F3) for information
+- **Typography**: Clear, readable fonts with proper hierarchy
+- **Spacing**: Consistent padding and margins throughout the app
+- **Animations**: Smooth, purposeful animations that enhance user experience
+</PRD> 

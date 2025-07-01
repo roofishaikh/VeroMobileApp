@@ -30,6 +30,17 @@ const SwipableGoalCards = ({
   styles,
   onReorderSubgoals
 }) => {
+  // Add null/undefined check for goals
+  if (!goals || !Array.isArray(goals)) {
+    return (
+      <View style={styles.swipeZone}>
+        <View style={styles.emptyStateContainer}>
+          <Text style={styles.emptyStateText}>Loading goals...</Text>
+        </View>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.swipeZone}>
       {goals.length === 0 ? (
@@ -42,7 +53,7 @@ const SwipableGoalCards = ({
         </View>
       ) : (
         <PanGestureHandler
-          key={goals[0].id}
+          key={goals[0]?.id || 'default'}
           enabled={true}
           onGestureEvent={gestureHandler}
         >
@@ -56,25 +67,25 @@ const SwipableGoalCards = ({
                 <TextInput
                   style={[
                     styles.cardText,
-                    getValidationError(0) && styles.inputError
+                    getValidationError && getValidationError(0) && styles.inputError
                   ]}
                   multiline={true}
                   placeholder="Enter goal title..."
                   placeholderTextColor="#999"
-                  value={goals[0].text}
+                  value={goals[0]?.text || ''}
                   onChangeText={(newText) => {
                     validateAndUpdateGoalTitle(0, newText);
                   }}
                 />
-                {getValidationError(0) && (
+                {getValidationError && getValidationError(0) && (
                   <Text style={styles.errorText}>{getValidationError(0)}</Text>
                 )}
                 <Text style={styles.charCount}>
-                  {goals[0].text.length}/{MAX_GOAL_TITLE_LENGTH}
+                  {(goals[0]?.text || '').length}/{MAX_GOAL_TITLE_LENGTH}
                 </Text>
                 {/* Draggable subgoals */}
                 <DraggableFlatList
-                  data={goals[0].subgoals.filter(Boolean)}
+                  data={(goals[0]?.subgoals || []).filter(Boolean)}
                   keyExtractor={item => item.id.toString()}
                   renderItem={({ item, index, drag, isActive }) => {
                     if (!item) return null;
@@ -113,7 +124,7 @@ const SwipableGoalCards = ({
                             style={[
                               styles.subgoalText,
                               item.isCompleted && styles.completedSubgoalText,
-                              getValidationError(0, index) && styles.inputError
+                              getValidationError && getValidationError(0, index) && styles.inputError
                             ]}
                           />
                           <Text style={styles.charCount}>
@@ -133,15 +144,15 @@ const SwipableGoalCards = ({
                   scrollEnabled={false}
                 />
                 {/* Show subgoal validation errors */}
-                {goals[0].subgoals.filter(Boolean).map((sub, subIdx) => 
-                  getValidationError(0, subIdx) && (
+                {(goals[0]?.subgoals || []).filter(Boolean).map((sub, subIdx) => 
+                  getValidationError && getValidationError(0, subIdx) && (
                     <Text key={`error-${sub?.id ?? subIdx}`} style={styles.errorText}>
                       {getValidationError(0, subIdx)}
                     </Text>
                   )
                 )}
                 {/* Validation summary */}
-                {hasValidationErrors() && Object.keys(validationErrors).some(key => key.startsWith(`goal-0`) || key.startsWith(`subgoal-0`)) && (
+                {hasValidationErrors && validationErrors && Object.keys(validationErrors).some(key => key.startsWith(`goal-0`) || key.startsWith(`subgoal-0`)) && (
                   <View style={styles.validationSummary}>
                     <Text style={styles.validationSummaryTitle}>Please fix the following issues:</Text>
                     {Object.entries(validationErrors)

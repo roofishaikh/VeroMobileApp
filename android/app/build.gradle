@@ -87,7 +87,7 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.verov1"
+    namespace "com.xohel.VeroEAS"
     defaultConfig {
         applicationId 'com.xohel.VeroEAS'
         minSdkVersion rootProject.ext.minSdkVersion

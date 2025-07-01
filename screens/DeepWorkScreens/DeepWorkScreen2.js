@@ -54,7 +54,7 @@ const validateSubgoal = (text, existingSubgoals, currentIndex = -1) => {
 function DeepWorkScreen2({ navigation }) {
   const [showStopwatchCard, setShowStopwatchCard] = useState(false);
   const [showSetTimeCard, setShowSetTimeCard] = useState(false);
-  const [centerDeck, setCenterDeck] = useState(initialGoals);
+  const [centerDeck, setCenterDeck] = useState([]);
   const [leftPile, setLeftPile] = useState([]);
   const [rightPile, setRightPile] = useState([]);
   const [nextId, setNextId] = useState(4);
