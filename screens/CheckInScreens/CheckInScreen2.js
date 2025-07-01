@@ -1,13 +1,27 @@
-import { Text, View, StyleSheet, Dimensions, Image, SafeAreaView, ScrollView} from "react-native";
+import { Text, View, StyleSheet, Dimensions, Image, SafeAreaView, ScrollView, Pressable, Platform} from "react-native";
 import QuestionComponent from "../../components/QuestionComponent";
 import PrimaryButton from "../../components/primaryButton";
 import FocusCard from "../../components/FocusCard";
 import Screen1QuesionsCard from "../../components/Screen1QuestiosCard";
-import React from "react";
+import React, { useState } from "react";
+import { useCheckIn } from "../../contexts/CheckInContext";
 
 
 
 export default function CheckInScreen2() {
+    const { checkInData, updateCheckInData } = useCheckIn();
+    const [selectedTertiaryEmotion, setSelectedTertiaryEmotion] = useState(checkInData.tertiaryEmotion);
+
+    const handleTertiaryEmotionPress = (emotion) => {
+        setSelectedTertiaryEmotion(emotion);
+        updateCheckInData('tertiaryEmotion', emotion);
+    };
+
+    const tertiaryEmotions = [
+        'Let Down', 'Betrayed', 'Disrespected', 'Ridiculed', 'Indignant', 
+        'Violated', 'Furious', 'Provoded', 'Hostile', 'Infuriated', 
+        'Annoyed', 'Withdrawn', 'Numb', 'Skeptical', 'Dismissive'
+    ];
 
     return(
         <SafeAreaView style={styles.outterContainer}>
@@ -19,58 +33,30 @@ export default function CheckInScreen2() {
              </View>             
 
              <View style={styles.OptionsCard}>
-                
-               <View style={styles.EmotionsButton}>
-                    <Text style={styles.EmotionsButtonText}>Let Down</Text>
-               </View>
-               <View style={styles.EmotionsButton}>
-                    <Text style={styles.EmotionsButtonText}>Betrayed</Text>
-               </View>
-               <View style={styles.EmotionsButton}>
-                    <Text style={styles.EmotionsButtonText}>Disrespected</Text>
-               </View>
-               <View style={styles.EmotionsButton}>
-                    <Text style={styles.EmotionsButtonText}>Ridiculed</Text>
-               </View>
-               <View style={styles.EmotionsButton}>
-                    <Text style={styles.EmotionsButtonText}>Indignant</Text>
-               </View>
-               <View style={styles.EmotionsButton}>
-                    <Text style={styles.EmotionsButtonText}>Violated</Text>
-               </View>
-               <View style={styles.EmotionsButton}>
-                    <Text style={styles.EmotionsButtonText}>Furious</Text>
-               </View>
-               <View style={styles.EmotionsButton}>
-                    <Text style={styles.EmotionsButtonText}>Provoded</Text>
-               </View>
-               <View style={styles.EmotionsButton}>
-                    <Text style={styles.EmotionsButtonText}>Hostile</Text>
-               </View>
-               <View style={styles.EmotionsButton}>
-                    <Text style={styles.EmotionsButtonText}>Infuriated</Text>
-               </View>
-               <View style={styles.EmotionsButton}>
-                    <Text style={styles.EmotionsButtonText}>Annoyed</Text>
-               </View>
-               <View style={styles.EmotionsButton}>
-                    <Text style={styles.EmotionsButtonText}>Withdrawn</Text>
-               </View>
-               <View style={styles.EmotionsButton}>
-                    <Text style={styles.EmotionsButtonText}>Numb</Text>
-               </View>
-               <View style={styles.EmotionsButton}>
-                    <Text style={styles.EmotionsButtonText}>Skeptical</Text>
-               </View>
-               <View style={styles.EmotionsButton}>
-                    <Text style={styles.EmotionsButtonText}>Dismissive</Text>
-               </View>
-
+                {tertiaryEmotions.map((emotion) => (
+                    <Pressable
+                        key={emotion}
+                        style={({ pressed }) => [
+                            styles.EmotionsButton,
+                            pressed && styles.emotionPressed,
+                            selectedTertiaryEmotion === emotion && styles.emotionSelected
+                        ]}
+                        onPress={() => handleTertiaryEmotionPress(emotion)}
+                        android_ripple={{
+                            color: 'rgba(0, 0, 0, 0.1)',
+                            borderless: false,
+                            radius: 25
+                        }}
+                    >
+                        <Text style={styles.EmotionsButtonText}>{emotion}</Text>
+                    </Pressable>
+                ))}
              </View>
 
-            <PrimaryButton style={styles.startButton}>
-              { "SAVE EMOTION"}
-            </PrimaryButton>
+            <PrimaryButton 
+              text="SAVE EMOTION"
+              style={styles.startButton}
+            />
             
         </SafeAreaView>
     ) ;
@@ -131,12 +117,20 @@ const styles = StyleSheet.create({
         padding: 10,
         margin: 10,
         flexDirection: "row",
-               
-        
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    emotionPressed: {
+        opacity: Platform.OS === 'ios' ? 0.6 : 1,
+        transform: [{ scale: 0.95 }],
+    },
+    emotionSelected: {
+        backgroundColor: 'rgba(52, 91, 222, 0.2)',
+        borderColor: '#305bde',
+        borderWidth: 2,
     },
     EmotionsButtonText: {
         fontSize: 20,
-
     }
     
     

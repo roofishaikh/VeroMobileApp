@@ -8,6 +8,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper';
 import ErrorBoundary from './components/ErrorBoundary';
+import { CheckInProvider } from './contexts/CheckInContext';
 
 // Screens
 import DeepWorkScreen1 from './screens/DeepWorkScreens/DeepWorkScreen1';
@@ -88,19 +89,21 @@ export default function App() {
   return (
     <ErrorBoundary>
       <PaperProvider theme={DefaultTheme}>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <LinearGradient colors={['#55355F', '#C97C76', '#FECE7D']} style={styles.background}>
-            <NavigationContainer>
-              <Stack.Navigator screenOptions={{ headerShown: false }}>
-                <Stack.Screen name="HomeTabs" component={BottomTabs} />
-                <Stack.Screen name="DeepScreen1" component={DeepWorkScreen1} />
-                <Stack.Screen name="DeepScreen2" component={DeepWorkScreen2} />
-                <Stack.Screen name="DeepWorkScreen3" component={DeepWorkCompleteScreen} />
-                <Stack.Screen name="DeepWorkScreen4" component={DeepWorkSummary} />
-              </Stack.Navigator>
-            </NavigationContainer>
-          </LinearGradient>
-        </GestureHandlerRootView>
+        <CheckInProvider>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <LinearGradient colors={['#55355F', '#C97C76', '#FECE7D']} style={styles.background}>
+              <NavigationContainer>
+                <Stack.Navigator screenOptions={{ headerShown: false }}>
+                  <Stack.Screen name="HomeTabs" component={BottomTabs} />
+                  <Stack.Screen name="DeepScreen1" component={DeepWorkScreen1} />
+                  <Stack.Screen name="DeepScreen2" component={DeepWorkScreen2} />
+                  <Stack.Screen name="DeepWorkScreen3" component={DeepWorkCompleteScreen} />
+                  <Stack.Screen name="DeepWorkScreen4" component={DeepWorkSummary} />
+                </Stack.Navigator>
+              </NavigationContainer>
+            </LinearGradient>
+          </GestureHandlerRootView>
+        </CheckInProvider>
       </PaperProvider>
     </ErrorBoundary>
   );

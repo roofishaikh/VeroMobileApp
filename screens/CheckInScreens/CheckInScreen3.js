@@ -1,13 +1,30 @@
-import { Text, View, StyleSheet, Dimensions, Image} from "react-native";
+import { Text, View, StyleSheet, Dimensions, Image, Pressable, Platform} from "react-native";
 import QuestionComponent from "../../components/QuestionComponent";
 import PrimaryButton from "../../components/primaryButton";
 import FocusCard from "../../components/FocusCard";
 import Screen1QuesionsCard from "../../components/Screen1QuestiosCard";
-import React from "react";
+import React, { useState } from "react";
+import { useCheckIn } from "../../contexts/CheckInContext";
 
 
 
 export default function CheckInScreen3() {
+    const { checkInData, updateCheckInData } = useCheckIn();
+    const [selectedEnergyLevel, setSelectedEnergyLevel] = useState(checkInData.energyLevel);
+    const [selectedMentalClarity, setSelectedMentalClarity] = useState(checkInData.mentalClarity);
+
+    const handleEnergyLevelPress = (level) => {
+        setSelectedEnergyLevel(level);
+        updateCheckInData('energyLevel', level);
+    };
+
+    const handleMentalClarityPress = (clarity) => {
+        setSelectedMentalClarity(clarity);
+        updateCheckInData('mentalClarity', clarity);
+    };
+
+    const energyLevels = ['Low', 'Medium', 'High'];
+    const mentalClarityOptions = ['Scattered', 'Balanced', 'Focused'];
 
     return(
         <View style={styles.outterContainer}>
@@ -23,25 +40,58 @@ export default function CheckInScreen3() {
                     <View style={styles.energyLevelContainer}>
                          <Text style={styles.EnergyLevelText}>Energy Level</Text>
                     </View>
-                         <View style={styles.energyMeterContainer}>
-                              <Text>Energy meter</Text>
-                         </View>
+                    <View style={styles.energyMeterContainer}>
+                        {energyLevels.map((level) => (
+                            <Pressable
+                                key={level}
+                                style={({ pressed }) => [
+                                    styles.energyButton,
+                                    pressed && styles.optionPressed,
+                                    selectedEnergyLevel === level && styles.optionSelected
+                                ]}
+                                onPress={() => handleEnergyLevelPress(level)}
+                                android_ripple={{
+                                    color: 'rgba(0, 0, 0, 0.1)',
+                                    borderless: false,
+                                    radius: 25
+                                }}
+                            >
+                                <Text style={styles.energyButtonText}>{level}</Text>
+                            </Pressable>
+                        ))}
+                    </View>
 
                     <View style={styles.energyLevelContainer}>
                          <Text style={styles.EnergyLevelText}>Mental Clarity</Text>
                     </View>
-                         <View style={styles.mentalClarityContainer}>
-                              <Text style={styles.mentalClarityButtons} >Scattered</Text>
-                              <Text style={styles.mentalClarityButtons}>Balanced</Text>
-                              <Text style={styles.mentalClarityButtons}>Focused</Text>
-                         </View>
+                    <View style={styles.mentalClarityContainer}>
+                        {mentalClarityOptions.map((clarity) => (
+                            <Pressable
+                                key={clarity}
+                                style={({ pressed }) => [
+                                    styles.mentalClarityButtons,
+                                    pressed && styles.optionPressed,
+                                    selectedMentalClarity === clarity && styles.optionSelected
+                                ]}
+                                onPress={() => handleMentalClarityPress(clarity)}
+                                android_ripple={{
+                                    color: 'rgba(0, 0, 0, 0.1)',
+                                    borderless: false,
+                                    radius: 25
+                                }}
+                            >
+                                <Text style={styles.mentalClarityButtonText}>{clarity}</Text>
+                            </Pressable>
+                        ))}
+                    </View>
                     
                 
              </View>
 
-            <PrimaryButton style={styles.startButton}>
-              { "NEXT"}
-            </PrimaryButton>
+            <PrimaryButton 
+              text="NEXT"
+              style={styles.startButton}
+            />
             
         </View>
     ) ;
@@ -108,33 +158,52 @@ const styles = StyleSheet.create({
     energyMeterContainer: {
      width: '100%',
      height: 100,
-     borderColor: '#000000',
-     borderWidth: 2,
+     flexDirection: 'row',
+     justifyContent: 'space-around',
+     alignItems: 'center',
+     paddingHorizontal: 20,
+    },
+    energyButton: {
+        padding: 15,
+        backgroundColor: '#305bde',
+        borderRadius: 20,
+        minWidth: 80,
+        alignItems: 'center',
+    },
+    energyButtonText: {
+        fontSize: 18,
+        fontWeight: "bold",
+        color: 'white',
     },
     mentalClarityContainer: {
      width: '100%',
      height: 60,
      flexDirection: "row",
      alignItems: "center",
+     justifyContent: 'space-around',
+     paddingHorizontal: 20,
      // borderColor: '#000000',
      // borderWidth: 2,
     },
     mentalClarityButtons: {
-     marginLeft: 10,
      padding: 10,
      backgroundColor: '#305bde',
      borderRadius: 20,
+     minWidth: 80,
+     alignItems: 'center',
+    },
+    mentalClarityButtonText: {
      fontSize: 18,
      fontWeight: "bold",
-     color: 'white'
-
-    }
-
-
-   
-   
-    
-    
-   
-   
+     color: 'white',
+    },
+    optionPressed: {
+        opacity: Platform.OS === 'ios' ? 0.6 : 1,
+        transform: [{ scale: 0.95 }],
+    },
+    optionSelected: {
+        backgroundColor: '#1e3a8a',
+        borderWidth: 2,
+        borderColor: '#ffffff',
+    },
 })

@@ -1,13 +1,33 @@
-import { Text, View, StyleSheet, Dimensions, Image} from "react-native";
+import { Text, View, StyleSheet, Dimensions, Image, Pressable, Platform} from "react-native";
 import QuestionComponent from "../../components/QuestionComponent";
 import PrimaryButton from "../../components/primaryButton";
 import FocusCard from "../../components/FocusCard";
 import Screen1QuesionsCard from "../../components/Screen1QuestiosCard";
-import React from "react";
+import React, { useState } from "react";
+import { useCheckIn } from "../../contexts/CheckInContext";
 
 
 
 export default function CheckInScreen4() {
+    const { checkInData, updateCheckInData } = useCheckIn();
+    const [selectedActivity, setSelectedActivity] = useState(checkInData.currentActivity);
+
+    const handleActivityPress = (activity) => {
+        setSelectedActivity(activity);
+        updateCheckInData('currentActivity', activity);
+    };
+
+    const activities = [
+        { id: 'deep-work', icon: require('../../assets/icons/brain.png'), label: 'Deep Work' },
+        { id: 'meeting', icon: require('../../assets/icons/text-bubble.png'), label: 'Meeting' },
+        { id: 'resting', icon: require('../../assets/icons/exercise.png'), label: 'Resting' },
+        { id: 'exercising', icon: require('../../assets/icons/exercise (1).png'), label: 'Exercising' },
+        { id: 'shallow-work', icon: require('../../assets/icons/work-from-home.png'), label: 'Shallow work' },
+        { id: 'distracted', icon: require('../../assets/icons/neutral.png'), label: 'Distracted' },
+        { id: 'eating', icon: require('../../assets/icons/eating.png'), label: 'Eating' },
+        { id: 'scrolling', icon: require('../../assets/icons/scrolling.png'), label: 'Scrolling' },
+        { id: 'walking', icon: require('../../assets/icons/walking.png'), label: 'Walking' },
+    ];
 
     return(
         <View style={styles.outterContainer}>
@@ -21,48 +41,31 @@ export default function CheckInScreen4() {
             
 
              <View style={styles.emojisHolder}>
-                <View style={styles.iconContainer}>
-                    <Image style={styles.emojiStyling} source={require('../../assets/icons/brain.png')} />
-                    <Text style={styles.emojiText}>Deep Work</Text>
-                </View>
-                <View style={styles.iconContainer}>
-                    <Image style={styles.emojiStyling} source={require('../../assets/icons/text-bubble.png')} />
-                    <Text style={styles.emojiText}>Meeting</Text>
-                </View>
-                <View style={styles.iconContainer}>
-                    <Image style={styles.emojiStyling} source={require('../../assets/icons/exercise.png')} />
-                    <Text style={styles.emojiText}>Resting</Text>
-                </View>
-                <View style={styles.iconContainer}>
-                    <Image style={styles.emojiStyling} source={require('../../assets/icons/exercise (1).png')} />
-                    <Text style={styles.emojiText}>Exercising</Text>
-                </View>
-                <View style={styles.iconContainer}>
-                    <Image style={styles.emojiStyling} source={require('../../assets/icons/work-from-home.png')} />
-                    <Text style={styles.emojiText}>Shallow work</Text>
-                </View>
-                <View style={styles.iconContainer}>
-                    <Image style={styles.emojiStyling} source={require('../../assets/icons/neutral.png')} />
-                    <Text style={styles.emojiText}>Distracted</Text>
-                </View>
-                <View style={styles.iconContainer}>
-                    <Image style={styles.emojiStyling} source={require('../../assets/icons/eating.png')} />
-                    <Text style={styles.emojiText}>Eating</Text>
-                </View>
-                <View style={styles.iconContainer}>
-                    <Image style={styles.emojiStyling} source={require('../../assets/icons/scrolling.png')} />
-                    <Text style={styles.emojiText}>Scrolling</Text>
-                </View>
-                <View style={styles.iconContainer}>
-                    <Image style={styles.emojiStyling} source={require('../../assets/icons/walking.png')} />
-                    <Text style={styles.emojiText}>Walking</Text>
-                </View>
-             
+                {activities.map((activity) => (
+                    <Pressable
+                        key={activity.id}
+                        style={({ pressed }) => [
+                            styles.iconContainer,
+                            pressed && styles.iconPressed,
+                            selectedActivity === activity.id && styles.iconSelected
+                        ]}
+                        onPress={() => handleActivityPress(activity.id)}
+                        android_ripple={{
+                            color: 'rgba(0, 0, 0, 0.1)',
+                            borderless: false,
+                            radius: 50
+                        }}
+                    >
+                        <Image style={styles.emojiStyling} source={activity.icon} />
+                        <Text style={styles.emojiText}>{activity.label}</Text>
+                    </Pressable>
+                ))}
              </View>
 
-            <PrimaryButton style={styles.startButton}>
-              { "Finish Check-In"}
-            </PrimaryButton>
+            <PrimaryButton 
+              text="Finish Check-In"
+              style={styles.startButton}
+            />
             
         </View>
     ) ;
@@ -110,9 +113,21 @@ const styles = StyleSheet.create({
         marginLeft:6,
         marginRight: 6,
         marginTop: 12,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 50,
      //    borderColor: '#000000',
      //    borderWidth: 2,
         
+    },
+    iconPressed: {
+        opacity: Platform.OS === 'ios' ? 0.6 : 1,
+        transform: [{ scale: 0.95 }],
+    },
+    iconSelected: {
+        backgroundColor: 'rgba(52, 91, 222, 0.2)',
+        borderWidth: 2,
+        borderColor: '#305bde',
     },
     emojisHolder: {
         

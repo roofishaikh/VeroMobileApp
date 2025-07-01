@@ -4,10 +4,37 @@ import PrimaryButton from "../../components/primaryButton";
 import FocusCard from "../../components/FocusCard";
 import Screen1QuesionsCard from "../../components/Screen1QuestiosCard";
 import React from "react";
+import { useCheckIn } from "../../contexts/CheckInContext";
 
 
 
 export default function CheckInScreen5() {
+    const { checkInData } = useCheckIn();
+
+    // Helper function to format the data for display
+    const formatDisplayValue = (value) => {
+        if (!value) return 'Not selected';
+        
+        // Format activity labels
+        if (value === 'deep-work') return 'Deep Work';
+        if (value === 'shallow-work') return 'Shallow Work';
+        
+        // Capitalize first letter for other values
+        return value.charAt(0).toUpperCase() + value.slice(1);
+    };
+
+    // Helper function to get emotion label
+    const getEmotionLabel = (emotionId) => {
+        const emotionMap = {
+            'happy': 'Happy',
+            'neutral': 'Neutral',
+            'sad': 'Sad',
+            'angry': 'Angry',
+            'anxious': 'Anxious',
+            'numb': 'Numb'
+        };
+        return emotionMap[emotionId] || 'Not selected';
+    };
 
     return(
         <View style={styles.outterContainer}>
@@ -26,27 +53,27 @@ export default function CheckInScreen5() {
 
                        <View style={styles.resultCardProps}>
                          <Text style={styles.resultText1}>Primary Emotion</Text>
-                        <Text style={styles.resultText2}>Angry</Text>
+                        <Text style={styles.resultText2}>{getEmotionLabel(checkInData.primaryEmotion)}</Text>
                        </View>
 
                        <View style={styles.resultCardProps}>
                          <Text style={styles.resultText1}>Tertiary Emotion</Text>
-                        <Text style={styles.resultText2}>Violated</Text>
+                        <Text style={styles.resultText2}>{formatDisplayValue(checkInData.tertiaryEmotion)}</Text>
                        </View>
 
                        <View style={styles.resultCardProps}>
                          <Text style={styles.resultText1}>Energy</Text>
-                        <Text style={styles.resultText2}>Medium</Text>
+                        <Text style={styles.resultText2}>{formatDisplayValue(checkInData.energyLevel)}</Text>
                        </View>
 
                        <View style={styles.resultCardProps}>
                          <Text style={styles.resultText1}>Focus</Text>
-                        <Text style={styles.resultText2}>Balanced</Text>
+                        <Text style={styles.resultText2}>{formatDisplayValue(checkInData.mentalClarity)}</Text>
                        </View>
 
                        <View style={styles.resultCardProps}>
                          <Text style={styles.resultText1}>Activity</Text>
-                        <Text style={styles.resultText2}>Deep Work</Text>
+                        <Text style={styles.resultText2}>{formatDisplayValue(checkInData.currentActivity)}</Text>
                        </View>
                     </View>
 
@@ -55,9 +82,10 @@ export default function CheckInScreen5() {
                 
              </View>
 
-            <PrimaryButton style={styles.startButton}>
-              { "Write a Thought"}
-            </PrimaryButton>
+            <PrimaryButton 
+              text="Write a Thought"
+              style={styles.startButton}
+            />
             
         </View>
     ) ;

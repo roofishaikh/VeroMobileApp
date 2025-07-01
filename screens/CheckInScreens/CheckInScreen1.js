@@ -1,14 +1,32 @@
-import { Text, View, StyleSheet, Dimensions, Image, SafeAreaView} from "react-native";
+import { Text, View, StyleSheet, Dimensions, Image, SafeAreaView, Pressable, Platform} from "react-native";
 import QuestionComponent from "../../components/QuestionComponent";
 import PrimaryButton from "../../components/primaryButton";
 import FocusCard from "../../components/FocusCard";
 import Screen1QuesionsCard from "../../components/Screen1QuestiosCard";
-import React from "react";
+import React, { useState } from "react";
 import OutterContainer from "../../components/OutterContainer";
+import { useCheckIn } from "../../contexts/CheckInContext";
 
 
 
 export default function CheckInScreen1() {
+    const { checkInData, updateCheckInData } = useCheckIn();
+    const [selectedEmotion, setSelectedEmotion] = useState(checkInData.primaryEmotion);
+
+    const handleEmotionPress = (emotion) => {
+        setSelectedEmotion(emotion);
+        updateCheckInData('primaryEmotion', emotion);
+        // Add any additional logic here for emotion selection
+    };
+
+    const emotions = [
+        { id: 'happy', icon: require('../../assets/icons/happy-face.png'), label: 'Happy' },
+        { id: 'neutral', icon: require('../../assets/icons/neutral.png'), label: 'Neutral' },
+        { id: 'sad', icon: require('../../assets/icons/sad.png'), label: 'Sad' },
+        { id: 'angry', icon: require('../../assets/icons/angry.png'), label: 'Angry' },
+        { id: 'anxious', icon: require('../../assets/icons/anxious.png'), label: 'Anxious' },
+        { id: 'numb', icon: require('../../assets/icons/neutral.png'), label: 'Numb' },
+    ];
 
     return(
         <SafeAreaView style={styles.outterContainer}>
@@ -25,30 +43,25 @@ export default function CheckInScreen1() {
              </View>
 
              <View style={styles.emojisHolder}>
-                <View style={styles.iconContainer}>
-                    <Image style={styles.emojiStyling} source={require('../../assets/icons/happy-face.png')} />
-                    <Text style={styles.emojiText}>Happy</Text>
-                </View>
-                <View style={styles.iconContainer}>
-                    <Image style={styles.emojiStyling} source={require('../../assets/icons/neutral.png')} />
-                    <Text style={styles.emojiText}>Neutral</Text>
-                </View>
-                <View style={styles.iconContainer}>
-                    <Image style={styles.emojiStyling} source={require('../../assets/icons/sad.png')} />
-                    <Text style={styles.emojiText}>Sad</Text>
-                </View>
-                <View style={styles.iconContainer}>
-                    <Image style={styles.emojiStyling} source={require('../../assets/icons/angry.png')} />
-                    <Text style={styles.emojiText}>Angry</Text>
-                </View>
-                <View style={styles.iconContainer}>
-                    <Image style={styles.emojiStyling} source={require('../../assets/icons/anxious.png')} />
-                    <Text style={styles.emojiText}>Anxious</Text>
-                </View>
-                <View style={styles.iconContainer}>
-                    <Image style={styles.emojiStyling} source={require('../../assets/icons/neutral.png')} />
-                    <Text style={styles.emojiText}>Numb</Text>
-                </View>
+                {emotions.map((emotion) => (
+                    <Pressable
+                        key={emotion.id}
+                        style={({ pressed }) => [
+                            styles.iconContainer,
+                            pressed && styles.iconPressed,
+                            selectedEmotion === emotion.id && styles.iconSelected
+                        ]}
+                        onPress={() => handleEmotionPress(emotion.id)}
+                        android_ripple={{
+                            color: 'rgba(0, 0, 0, 0.1)',
+                            borderless: false,
+                            radius: 45
+                        }}
+                    >
+                        <Image style={styles.emojiStyling} source={emotion.icon} />
+                        <Text style={styles.emojiText}>{emotion.label}</Text>
+                    </Pressable>
+                ))}
              
                 
              <View style={styles.exploreFeelContainer}>
@@ -57,18 +70,29 @@ export default function CheckInScreen1() {
                 </Text>
              
 
-             <View style={styles.iconContainer}>
+             <Pressable
+                style={({ pressed }) => [
+                    styles.iconContainer,
+                    pressed && styles.iconPressed
+                ]}
+                android_ripple={{
+                    color: 'rgba(0, 0, 0, 0.1)',
+                    borderless: false,
+                    radius: 45
+                }}
+             >
                     <Image style={styles.emojiStyling} source={require('../../assets/icons/neutral.png')} />
                     {/* <Text style={styles.emojiText}>Overwhelmed</Text> */}
-                </View>
+             </Pressable>
 
                 </View>
 
              </View>
 
-            <PrimaryButton style={styles.startButton}>
-              { "NEXT"}
-            </PrimaryButton>
+            <PrimaryButton 
+              text="SKIP"
+              style={styles.startButton}
+            />
             
         </SafeAreaView>
     ) ;
@@ -123,9 +147,21 @@ const styles = StyleSheet.create({
         height: 100,
         marginLeft:18,
         marginTop: 12,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 45,
         // borderColor: '#000000',
         // borderWidth: 2,
         
+    },
+    iconPressed: {
+        opacity: Platform.OS === 'ios' ? 0.6 : 1,
+        transform: [{ scale: 0.95 }],
+    },
+    iconSelected: {
+        backgroundColor: 'rgba(52, 91, 222, 0.2)',
+        borderWidth: 2,
+        borderColor: '#305bde',
     },
     emojisHolder: {
         
