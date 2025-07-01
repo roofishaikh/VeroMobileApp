@@ -1,95 +1,92 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Animated } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { CountdownCircleTimer } from 'react-native-countdown-circle-timer';
 
 const CountdownTimer = ({ 
   duration = 4, 
   onComplete, 
   isActive = false, 
   size = 60,
-  showSeconds = false 
+  showSeconds = false,
+  colorIndex = 0, // 0: red, 1: blue, 2: green, 3: yellow, 4: purple
+  isFallback = false // New prop to identify fallback timer
 }) => {
+  const [key, setKey] = useState(0);
   const [timeLeft, setTimeLeft] = useState(duration);
-  const [isRunning, setIsRunning] = useState(false);
-  const intervalRef = useRef(null);
-  const progressAnimation = useRef(new Animated.Value(1)).current;
+
+  // Define colors for each timer
+  const colors = ['#F44336', '#2196F3', '#4CAF50', '#FFEB3B', '#9C27B0']; // red, blue, green, yellow, purple
 
   useEffect(() => {
-    if (isActive && !isRunning) {
-      startTimer();
-    } else if (!isActive && isRunning) {
-      stopTimer();
+    if (isActive) {
+      // Reset the timer when it becomes active
+      setKey(prevKey => prevKey + 1);
+      setTimeLeft(duration);
     }
-  }, [isActive]);
+  }, [isActive, duration]);
 
+  // Custom fallback timer logic
   useEffect(() => {
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, []);
-
-  const startTimer = () => {
-    setTimeLeft(duration);
-    setIsRunning(true);
-    
-    // Start progress animation
-    progressAnimation.setValue(1);
-    Animated.timing(progressAnimation, {
-      toValue: 0,
-      duration: duration * 1000,
-      useNativeDriver: false,
-    }).start();
-
-    intervalRef.current = setInterval(() => {
-      setTimeLeft((prevTime) => {
-        if (prevTime <= 1) {
-          clearInterval(intervalRef.current);
-          setIsRunning(false);
-          if (onComplete) {
+    if (isFallback && isActive) {
+      const interval = setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            clearInterval(interval);
             onComplete();
+            return 0;
           }
-          return 0;
-        }
-        return prevTime - 1;
-      });
-    }, 1000);
-  };
+          return prev - 1;
+        });
+      }, 1000);
 
-  const stopTimer = () => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
+      return () => clearInterval(interval);
     }
-    setIsRunning(false);
-    setTimeLeft(duration);
-    progressAnimation.setValue(1);
+  }, [isFallback, isActive, onComplete]);
+
+  const formatTime = (remainingTime) => {
+    if (showSeconds) {
+      return `${remainingTime}s`;
+    }
+    return remainingTime.toString();
   };
 
-  const progressWidth = progressAnimation.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0%', '100%'],
-  });
-
-  return (
-    <View style={[styles.container, { width: size, height: size }]}>
-      <View style={[styles.timerBackground, { width: size, height: size }]}>
-        <Animated.View 
-          style={[
-            styles.progressBar, 
-            { 
-              width: progressWidth,
-              height: size,
-            }
-          ]} 
-        />
-        <View style={styles.timerContent}>
-          {showSeconds ? (
-            <Text style={styles.timerText}>{timeLeft}s</Text>
-          ) : (
-            <Text style={styles.timerText}>{timeLeft}</Text>
-          )}
+  // Render fallback timer (simple grey background with time)
+  if (isFallback) {
+    return (
+      <View style={[styles.container, { width: size, height: size }]}>
+        <View style={[styles.fallbackTimer, { width: size, height: size }]}>
+          <Text style={styles.fallbackTimerText}>
+            {formatTime(timeLeft)}
+          </Text>
         </View>
       </View>
+    );
+  }
+
+  // Render regular countdown timer
+  return (
+    <View style={[styles.container, { width: size, height: size }]}>
+      <CountdownCircleTimer
+        key={key}
+        isPlaying={isActive} // Only play when this timer is active
+        duration={duration}
+        colors={[colors[colorIndex]]} // Use single color based on index
+        size={size}
+        strokeWidth={4}
+        onComplete={onComplete}
+        trailColor="#f0f0f0"
+        strokeLinecap="round"
+      >
+        {({ remainingTime }) => (
+          <View style={styles.timerContent}>
+            {showSeconds && (
+              <Text style={styles.timerText}>
+                {formatTime(remainingTime)}
+              </Text>
+            )}
+          </View>
+        )}
+      </CountdownCircleTimer>
     </View>
   );
 };
@@ -99,31 +96,27 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  timerBackground: {
-    borderRadius: 30,
-    backgroundColor: '#f0f0f0',
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'hidden',
-    borderWidth: 2,
-    borderColor: '#e0e0e0',
-  },
-  progressBar: {
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    backgroundColor: '#4CAF50',
-    borderRadius: 28,
-  },
   timerContent: {
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 1,
   },
   timerText: {
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: 'bold',
     color: '#333',
+  },
+  fallbackTimer: {
+    backgroundColor: '#808080', // Grey background
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#666666',
+  },
+  fallbackTimerText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#FFFFFF', // White text
   },
 });
 

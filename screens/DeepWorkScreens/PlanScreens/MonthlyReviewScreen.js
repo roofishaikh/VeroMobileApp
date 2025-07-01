@@ -1,17 +1,22 @@
 import React, { useState, useRef, useEffect } from "react";
-import { View, StyleSheet, Dimensions, Text } from "react-native";
+import { View, StyleSheet, Dimensions, Text, Animated } from "react-native";
 import GradientScreenWrapper from "../../../components/GradientScreenWrapper";
 import TimeTimer from "../../../components/TimeTimer";
 import PrimaryButton from "../../../components/primaryButton";
-import SwipableQuestionCards from "../../../components/SwipableQuestionCards";
 import CountdownTimer from "../../../components/CountdownTimer";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 function MonthlyReviewScreen() { 
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
-  const [activeTimerIndex, setActiveTimerIndex] = useState(0);
   const [isAutoSwipeEnabled, setIsAutoSwipeEnabled] = useState(true);
+  const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const [buttonText, setButtonText] = useState("START JOURNALING");
+  const [timerText, setTimerText] = useState("10:00");
+  const timerRef = useRef(null);
+  const slideAnimation = useRef(new Animated.Value(0)).current;
+  const [activeTimerIndex, setActiveTimerIndex] = useState(0);
+  const [fallbackTimerKey, setFallbackTimerKey] = useState(0);
   
   // Define the card deck with 4 cards, each with unique questions
   const cards = [
@@ -53,11 +58,6 @@ function MonthlyReviewScreen() {
     },
   ];
 
-  const [isTimerRunning, setIsTimerRunning] = useState(false);
-  const [buttonText, setButtonText] = useState("START JOURNALING");
-  const [timerText, setTimerText] = useState("10:00");
-  const timerRef = useRef(null);
-
   // Timer durations for each card (in seconds)
   const timerDurations = [4, 4, 4, 4];
 
@@ -67,22 +67,17 @@ function MonthlyReviewScreen() {
       timerRef.current?.start();
       setIsTimerRunning(true);
       setButtonText("END JOURNALING");
-      // Start the first countdown timer
-      setActiveTimerIndex(0);
     } else {
       // Stop the timer
       timerRef.current?.reset();
       setIsTimerRunning(false);
       setButtonText("START JOURNALING");
-      // Reset countdown timers
-      setActiveTimerIndex(-1);
     }
   };
 
   const handleTimerEnd = () => {
     setIsTimerRunning(false);
     setButtonText("START JOURNALING");
-    setActiveTimerIndex(-1);
   };
 
   const handleTimerTick = (secondsLeft) => {
@@ -91,38 +86,52 @@ function MonthlyReviewScreen() {
     setTimerText(`${minutes}:${seconds.toString().padStart(2, '0')}`);
   };
 
-  // Handle countdown timer completion
-  const handleCountdownComplete = (timerIndex) => {
-    if (isAutoSwipeEnabled && isTimerRunning) {
-      // Auto-swipe to next card
-      const nextCardIndex = (currentCardIndex + 1) % cards.length;
-      setCurrentCardIndex(nextCardIndex);
-      
-      // Start next timer
-      const nextTimerIndex = (timerIndex + 1) % cards.length;
-      setActiveTimerIndex(nextTimerIndex);
-    }
-  };
-
   // Set initial time to 10 minutes when component mounts
   React.useEffect(() => {
     if (timerRef.current) {
       // Set the timer to show 10 minutes on a 60-minute circle
       timerRef.current.setInitialAngle(10);
     }
+    // Start the first countdown timer automatically when screen renders
+    setIsTimerRunning(true);
+    setActiveTimerIndex(0);
   }, []);
 
-  const handleCardChange = (newIndex) => {
-    // Implement infinite swiping logic
-    if (newIndex >= cards.length) {
-      // If swiping past the last card, loop back to the first
-      setCurrentCardIndex(0);
-    } else if (newIndex < 0) {
-      // If swiping before the first card, loop to the last
-      setCurrentCardIndex(cards.length - 1);
-    } else {
-      setCurrentCardIndex(newIndex);
+  // Handle countdown timer completion - triggers auto-swipe
+  const handleCountdownComplete = () => {
+    if (isAutoSwipeEnabled && isTimerRunning) {
+      // Animate card swipe
+      Animated.timing(slideAnimation, {
+        toValue: -SCREEN_WIDTH,
+        duration: 500,
+        useNativeDriver: true,
+      }).start(() => {
+        // Move to next card
+        const nextCardIndex = (currentCardIndex + 1) % cards.length;
+        setCurrentCardIndex(nextCardIndex);
+        
+        // Reset animation position
+        slideAnimation.setValue(0);
+      });
     }
+  };
+
+  const handleTimerComplete = (timerIndex) => {
+    // Move to next timer
+    const nextTimerIndex = (timerIndex + 1) % timerDurations.length;
+    setActiveTimerIndex(nextTimerIndex);
+    
+    // Move to next card
+    const nextCardIndex = (currentCardIndex + 1) % cards.length;
+    setCurrentCardIndex(nextCardIndex);
+    
+    // Reset fallback timer to sync with next timer
+    setFallbackTimerKey(prev => prev + 1);
+  };
+
+  const handleFallbackTimerComplete = () => {
+    // Fallback timer completed, trigger next timer
+    handleTimerComplete(activeTimerIndex);
   };
 
   // Get the current card data
@@ -131,30 +140,45 @@ function MonthlyReviewScreen() {
   return (
     <GradientScreenWrapper>
       <View style={styles.container}>
-        <SwipableQuestionCards 
-          title={currentCard.title} 
-          questions={currentCard.questions}
-          onCardChange={handleCardChange}
-          currentIndex={currentCardIndex}
-        />
+        {/* Self-Swiping Card */}
+        <Animated.View 
+          style={[
+            styles.cardContainer,
+            {
+              transform: [{ translateX: slideAnimation }]
+            }
+          ]}
+        >
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>{currentCard.title}</Text>
+            {currentCard.questions.map((question, index) => (
+              <Text key={index} style={styles.question}>
+                {question}
+              </Text>
+            ))}
+          </View>
+        </Animated.View>
         
         {/* Countdown Timer Row */}
         <View style={styles.timerRow}>
-          {cards.map((_, index) => (
+          {timerDurations.map((duration, index) => (
             <CountdownTimer
-              key={index}
-              duration={timerDurations[index]}
-              onComplete={() => handleCountdownComplete(index)}
-              isActive={isTimerRunning && activeTimerIndex === index}
-              size={45}
+              key={`timer-${index}`}
+              duration={duration}
+              isActive={index === activeTimerIndex}
+              onComplete={() => handleTimerComplete(index)}
+              colorIndex={index}
+              showSeconds={false}
             />
           ))}
+          
           {/* Fallback Timer */}
           <CountdownTimer
-            duration={timerDurations[currentCardIndex]}
-            onComplete={() => handleCountdownComplete(currentCardIndex)}
-            isActive={isTimerRunning && activeTimerIndex === currentCardIndex}
-            size={45}
+            key={`fallback-${fallbackTimerKey}`}
+            duration={timerDurations[activeTimerIndex]}
+            isActive={true}
+            onComplete={handleFallbackTimerComplete}
+            isFallback={true}
             showSeconds={true}
           />
         </View>
@@ -189,6 +213,39 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     alignItems: "center",
     justifyContent: "flex-start",
+  },
+  cardContainer: {
+    width: SCREEN_WIDTH,
+    alignItems: 'center',
+  },
+  card: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 30,
+    marginHorizontal: 20,
+    width: SCREEN_WIDTH - 40,
+    minHeight: 300,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  cardTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#333',
+    textAlign: 'center',
+    marginBottom: 30,
+  },
+  question: {
+    fontSize: 18,
+    color: '#555',
+    marginBottom: 20,
+    lineHeight: 26,
   },
   timerRow: {
     flexDirection: 'row',
