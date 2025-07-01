@@ -21,39 +21,38 @@ function MonthlyReviewScreen() {
   // Define the card deck with 4 cards, each with unique questions
   const cards = [
     {
-      title: 'Reflect',
+      title: 'Align: Quaterly goal check',
       questions: [
-        '1. What were my biggest achievements this month?',
-        '2. What challenges did I overcome?',
-        '3. What am I most grateful for?',
-        '4. What did I learn about myself?',
+        '1. How are my quaterly quests going?',
+        '2. Am I on track or off track? If off track, what can I do to get back on track?',
+        
       ],
     },
     {
-      title: 'Analyze',
+      title: 'Reflect: Weekly accountability check',
       questions: [
-        '1. How did I perform against my goals?',
-        '2. What habits served me well?',
-        '3. What patterns emerged?',
-        '4. Where did I struggle most?',
+        '1. What went well this past week? Acknowledge the progress achieved(big or small)',
+        '2. What did not go so well? What did I learn from it?',
+        '3. In what ways i did not act in line with my intentions for last week?',
+        '4. What would I like to change(if anything) next week?',
       ],
     },
     {
-      title: 'Plan',
+      title: 'Organise: Plan for the month ahead',
       questions: [
-        '1. What are my top 3 priorities for next month?',
-        '2. What new habits do I want to build?',
-        '3. What do I need to let go of?',
-        '4. How will I measure success?',
+        '1. What are the key priorities and goals we need to focus on?',
+        '2. How can we adjust to stay on track with our goals?',
+        '3. What are the biggest risks or challanges we anticipate, and how can we prepare for them?',
+        '4. What resources or support do we need to achieve our goals?',
       ],
     },
     {
-      title: 'Commit',
+      title: 'Organise: Plan for the week ahead',
       questions: [
-        '1. What am I committing to change?',
-        '2. What support do I need?',
-        '3. What will success look like?',
-        '4. How will I stay accountable?',
+        '1. Look ahead two weeks and create calendar blocks based on upcoming projects, meetings and personal events',
+        '2. How can I prepare to have a joyful week?',
+        '3. What three things would I like to accomplish in order to have the best possible week?',
+        
       ],
     },
   ];
