@@ -1,0 +1,121 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 11,
+        "title": "Setup Project Repository and Environment",
+        "description": "Create a new project repository and set up the necessary environment for development.",
+        "details": "",
+        "testStrategy": "",
+        "priority": "medium",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 12,
+        "title": "Implement Weekly Review Screen Card Deck",
+        "description": "Refactor the current card system to support a deck of 3 cards with unique questions.",
+        "details": "",
+        "testStrategy": "",
+        "priority": "medium",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 13,
+        "title": "Implement Infinite Swipable Card Deck",
+        "description": "Add infinite looping to the card deck for smooth swiping.",
+        "details": "",
+        "testStrategy": "",
+        "priority": "medium",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 14,
+        "title": "Add Countdown Timer Row to Weekly Review Screen",
+        "description": "Implement a row of countdown timers below the card deck.",
+        "details": "",
+        "testStrategy": "",
+        "priority": "medium",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 15,
+        "title": "Wire Timers to Cards for Auto-Swipe",
+        "description": "Automatically swipe cards based on timer elapse.",
+        "details": "",
+        "testStrategy": "",
+        "priority": "medium",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 16,
+        "title": "Implement Fallback Timer",
+        "description": "Add a fallback timer to the timer row.",
+        "details": "",
+        "testStrategy": "",
+        "priority": "medium",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 17,
+        "title": "Preserve Existing TimeTimer Component",
+        "description": "Ensure the existing TimeTimer component remains unchanged.",
+        "details": "",
+        "testStrategy": "",
+        "priority": "medium",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 18,
+        "title": "Implement Monthly Review Screen Card Deck and Timers",
+        "description": "Adapt the card deck and timer logic for Monthly Review Screen with 4 cards.",
+        "details": "",
+        "testStrategy": "",
+        "priority": "medium",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 19,
+        "title": "Ensure UI/UX Consistency",
+        "description": "Ensure all UI/UX elements are consistent with the app's design.",
+        "details": "",
+        "testStrategy": "",
+        "priority": "medium",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 20,
+        "title": "Test and Validate Implementation",
+        "description": "Conduct thorough testing to validate all features.",
+        "details": "",
+        "testStrategy": "",
+        "priority": "medium",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-07-01T14:30:40.725Z",
+      "updated": "2025-07-01T14:31:33.223Z",
+      "description": "Tasks for master context"
+    }
+  }
+}
