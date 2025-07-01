@@ -10,19 +10,32 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 function WeeklyReviewScreen() { 
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   
-  const getTitle = (index) => {
-    switch(index) {
-      case 0: return 'Align';
-      case 1: return 'Reflect';
-      case 2: return 'Organize';
-      default: return 'Align';
-    }
-  };
-
-  const questions = [
-    '1. What am I grateful for today?',
-    '2. What am I avoiding?',
-    '3. What am I excited about today?',
+  // Define the card deck with 3 cards, each with unique questions
+  const cards = [
+    {
+      title: 'Align',
+      questions: [
+        '1. What am I grateful for today?',
+        '2. What am I avoiding?',
+        '3. What am I excited about today?',
+      ],
+    },
+    {
+      title: 'Reflect',
+      questions: [
+        '1. What did I learn this week?',
+        '2. What challenged me?',
+        '3. What am I proud of?',
+      ],
+    },
+    {
+      title: 'Organize',
+      questions: [
+        '1. What are my top priorities for next week?',
+        '2. What can I delegate or defer?',
+        '3. What habits do I want to improve?',
+      ],
+    },
   ];
 
   const [isTimerRunning, setIsTimerRunning] = useState(false);
@@ -64,15 +77,27 @@ function WeeklyReviewScreen() {
   }, []);
 
   const handleCardChange = (newIndex) => {
-    setCurrentCardIndex(newIndex);
+    // Implement infinite swiping logic
+    if (newIndex >= cards.length) {
+      // If swiping past the last card, loop back to the first
+      setCurrentCardIndex(0);
+    } else if (newIndex < 0) {
+      // If swiping before the first card, loop to the last
+      setCurrentCardIndex(cards.length - 1);
+    } else {
+      setCurrentCardIndex(newIndex);
+    }
   };
+
+  // Get the current card data
+  const currentCard = cards[currentCardIndex];
 
   return (
     <GradientScreenWrapper>
       <View style={styles.container}>
         <SwipableQuestionCards 
-          title={getTitle(currentCardIndex)} 
-          questions={questions}
+          title={currentCard.title} 
+          questions={currentCard.questions}
           onCardChange={handleCardChange}
           currentIndex={currentCardIndex}
         />
