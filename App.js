@@ -13,11 +13,14 @@ import { CheckInProvider } from './contexts/CheckInContext';
 // Screens
 import DeepWorkScreen1 from './screens/DeepWorkScreens/DeepWorkScreen1';
 import DeepWorkScreen2 from './screens/DeepWorkScreens/DeepWorkScreen2';
-import CheckInScreen1 from './screens/CheckInScreens/CheckInScreen1';
 import DeepWorkSummary from './screens/DeepWorkScreens/DeepWorkSummary';
 import HabitTracker from './screens/InsightsScreens/HabitTracker';
 import DeepWorkCompleteScreen from './screens/DeepWorkScreens/DeepWorkCompleteScreen';
 import PlanModal from './screens/DeepWorkScreens/PlanScreens/PlanModal';
+
+// Navigation Stacks
+import PlanStack from './Navigation/PlanStack';
+import CheckInStack from './Navigation/CheckInStack';
 
 // Icons
 import Plan from './assets/icons/plan.svg';
@@ -25,7 +28,6 @@ import Focus from './assets/icons/focus.svg';
 import Checkin from './assets/icons/checkin.svg';
 import Reflect from './assets/icons/reflect.svg';
 import Insights from './assets/icons/insights.svg';
-import PlanStack from './Navigation/PlanStack';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -75,7 +77,7 @@ function BottomTabs() {
     >
       <Tab.Screen name="Plan" component={PlanStack} />
       <Tab.Screen name="Focus" component={DeepWorkScreen2} />
-      <Tab.Screen name="Check-In" component={CheckInScreen1} />
+      <Tab.Screen name="Check-In" component={CheckInStack} />
       <Tab.Screen name="Reflect" component={DeepWorkSummary} />
       <Tab.Screen name="Insights" component={HabitTracker} />
     </Tab.Navigator>

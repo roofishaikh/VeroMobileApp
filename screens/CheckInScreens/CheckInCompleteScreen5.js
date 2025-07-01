@@ -13,7 +13,7 @@ export default function CheckInScreen5() {
 
     // Helper function to format the data for display
     const formatDisplayValue = (value) => {
-        if (!value) return 'Not selected';
+        if (!value || value === '') return 'Skipped';
         
         // Format activity labels
         if (value === 'deep-work') return 'Deep Work';
@@ -25,6 +25,8 @@ export default function CheckInScreen5() {
 
     // Helper function to get emotion label
     const getEmotionLabel = (emotionId) => {
+        if (!emotionId || emotionId === '') return 'Skipped';
+        
         const emotionMap = {
             'happy': 'Happy',
             'neutral': 'Neutral',
@@ -33,7 +35,7 @@ export default function CheckInScreen5() {
             'anxious': 'Anxious',
             'numb': 'Numb'
         };
-        return emotionMap[emotionId] || 'Not selected';
+        return emotionMap[emotionId] || 'Skipped';
     };
 
     return(

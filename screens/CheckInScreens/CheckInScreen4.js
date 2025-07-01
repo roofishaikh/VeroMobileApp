@@ -5,16 +5,27 @@ import FocusCard from "../../components/FocusCard";
 import Screen1QuesionsCard from "../../components/Screen1QuestiosCard";
 import React, { useState } from "react";
 import { useCheckIn } from "../../contexts/CheckInContext";
+import { useNavigation } from "@react-navigation/native";
 
 
 
 export default function CheckInScreen4() {
     const { checkInData, updateCheckInData } = useCheckIn();
+    const navigation = useNavigation();
     const [selectedActivity, setSelectedActivity] = useState(checkInData.currentActivity);
 
     const handleActivityPress = (activity) => {
         setSelectedActivity(activity);
         updateCheckInData('currentActivity', activity);
+        // Navigate to summary screen after recording the activity
+        navigation.navigate('CheckInCompleteScreen5');
+    };
+
+    const handleSkip = () => {
+        // Record empty string for skipped current activity
+        updateCheckInData('currentActivity', '');
+        // Navigate to summary screen
+        navigation.navigate('CheckInCompleteScreen5');
     };
 
     const activities = [
@@ -65,6 +76,7 @@ export default function CheckInScreen4() {
             <PrimaryButton 
               text="Finish Check-In"
               style={styles.startButton}
+              onTap={handleSkip}
             />
             
         </View>

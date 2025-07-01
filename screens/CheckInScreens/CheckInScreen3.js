@@ -5,22 +5,36 @@ import FocusCard from "../../components/FocusCard";
 import Screen1QuesionsCard from "../../components/Screen1QuestiosCard";
 import React, { useState } from "react";
 import { useCheckIn } from "../../contexts/CheckInContext";
+import { useNavigation } from "@react-navigation/native";
 
 
 
 export default function CheckInScreen3() {
     const { checkInData, updateCheckInData } = useCheckIn();
+    const navigation = useNavigation();
     const [selectedEnergyLevel, setSelectedEnergyLevel] = useState(checkInData.energyLevel);
     const [selectedMentalClarity, setSelectedMentalClarity] = useState(checkInData.mentalClarity);
 
     const handleEnergyLevelPress = (level) => {
         setSelectedEnergyLevel(level);
         updateCheckInData('energyLevel', level);
+        // Navigate to next screen after recording energy level
+        navigation.navigate('CheckInScreen4');
     };
 
     const handleMentalClarityPress = (clarity) => {
         setSelectedMentalClarity(clarity);
         updateCheckInData('mentalClarity', clarity);
+        // Navigate to next screen after recording mental clarity
+        navigation.navigate('CheckInScreen4');
+    };
+
+    const handleSkip = () => {
+        // Record empty strings for skipped energy and mental clarity
+        updateCheckInData('energyLevel', '');
+        updateCheckInData('mentalClarity', '');
+        // Navigate to next screen
+        navigation.navigate('CheckInScreen4');
     };
 
     const energyLevels = ['Low', 'Medium', 'High'];
@@ -91,6 +105,7 @@ export default function CheckInScreen3() {
             <PrimaryButton 
               text="NEXT"
               style={styles.startButton}
+              onTap={handleSkip}
             />
             
         </View>

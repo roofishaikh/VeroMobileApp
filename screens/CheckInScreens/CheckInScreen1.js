@@ -6,17 +6,27 @@ import Screen1QuesionsCard from "../../components/Screen1QuestiosCard";
 import React, { useState } from "react";
 import OutterContainer from "../../components/OutterContainer";
 import { useCheckIn } from "../../contexts/CheckInContext";
+import { useNavigation } from "@react-navigation/native";
 
 
 
 export default function CheckInScreen1() {
     const { checkInData, updateCheckInData } = useCheckIn();
+    const navigation = useNavigation();
     const [selectedEmotion, setSelectedEmotion] = useState(checkInData.primaryEmotion);
 
     const handleEmotionPress = (emotion) => {
         setSelectedEmotion(emotion);
         updateCheckInData('primaryEmotion', emotion);
-        // Add any additional logic here for emotion selection
+        // Navigate to next screen after recording the emotion
+        navigation.navigate('CheckInScreen2');
+    };
+
+    const handleSkip = () => {
+        // Record empty string for skipped primary emotion
+        updateCheckInData('primaryEmotion', '');
+        // Navigate to next screen
+        navigation.navigate('CheckInScreen2');
     };
 
     const emotions = [
@@ -92,6 +102,7 @@ export default function CheckInScreen1() {
             <PrimaryButton 
               text="SKIP"
               style={styles.startButton}
+              onTap={handleSkip}
             />
             
         </SafeAreaView>

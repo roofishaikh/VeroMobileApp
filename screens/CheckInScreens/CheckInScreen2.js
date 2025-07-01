@@ -5,16 +5,27 @@ import FocusCard from "../../components/FocusCard";
 import Screen1QuesionsCard from "../../components/Screen1QuestiosCard";
 import React, { useState } from "react";
 import { useCheckIn } from "../../contexts/CheckInContext";
+import { useNavigation } from "@react-navigation/native";
 
 
 
 export default function CheckInScreen2() {
     const { checkInData, updateCheckInData } = useCheckIn();
+    const navigation = useNavigation();
     const [selectedTertiaryEmotion, setSelectedTertiaryEmotion] = useState(checkInData.tertiaryEmotion);
 
     const handleTertiaryEmotionPress = (emotion) => {
         setSelectedTertiaryEmotion(emotion);
         updateCheckInData('tertiaryEmotion', emotion);
+        // Navigate to next screen after recording the emotion
+        navigation.navigate('CheckInScreen3');
+    };
+
+    const handleSkip = () => {
+        // Record empty string for skipped tertiary emotion
+        updateCheckInData('tertiaryEmotion', '');
+        // Navigate to next screen
+        navigation.navigate('CheckInScreen3');
     };
 
     const tertiaryEmotions = [
@@ -56,6 +67,7 @@ export default function CheckInScreen2() {
             <PrimaryButton 
               text="SAVE EMOTION"
               style={styles.startButton}
+              onTap={handleSkip}
             />
             
         </SafeAreaView>
