@@ -33,13 +33,22 @@ export default function SwipableQuestionCards({ title, questions, onCardChange, 
       toValue: { x, y: 0 },
       duration: SWIPE_OUT_DURATION,
       useNativeDriver: false,
-    }).start(() => onSwipeComplete());
+    }).start(() => onSwipeComplete(direction));
   };
 
-  const onSwipeComplete = () => {
-    // Animate card back to center and show next question
+  const onSwipeComplete = (direction) => {
+    // Animate card back to center and show next/previous card
     position.setValue({ x: 0, y: 0 });
-    const newIndex = (currentIndex + 1) % questions.length;
+    
+    let newIndex;
+    if (direction === 'right') {
+      // Swipe right - go to next card
+      newIndex = currentIndex + 1;
+    } else {
+      // Swipe left - go to previous card
+      newIndex = currentIndex - 1;
+    }
+    
     // Notify parent component about the card change
     if (onCardChange) {
       onCardChange(newIndex);
@@ -69,14 +78,17 @@ export default function SwipableQuestionCards({ title, questions, onCardChange, 
       <Animated.View style={[styles.card, getCardStyle()]} {...panResponder.panHandlers}>
         <Text style={styles.titleText}>{title}</Text>
         <View style={styles.cardContent}>
-          <Text style={styles.questionNumber}>Question {(currentIndex + 1)}</Text>
-          <QuestionComponent>
-            {questions[currentIndex]}
-          </QuestionComponent>
+          {questions.map((question, index) => (
+            <View key={index} style={styles.questionContainer}>
+              <QuestionComponent>
+                {question}
+              </QuestionComponent>
+            </View>
+          ))}
         </View>
         <View style={styles.progressContainer}>
           <Text style={styles.progressText}>
-            {currentIndex + 1} / {questions.length}
+            Card {currentIndex + 1}
           </Text>
         </View>
       </Animated.View>
@@ -124,12 +136,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  questionNumber: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#ed9aed',
-    marginBottom: 10,
-    textAlign: 'center',
+  questionContainer: {
+    width: '100%',
+    marginBottom: 15,
   },
   progressContainer: {
     position: 'absolute',
