@@ -21,41 +21,36 @@ function WeeklyReviewScreen() {
   // Define the card deck with 4 cards, each with unique questions
   const cards = [
     {
-      title: 'Align',
+      title: 'Align: Quaterly goal check',
       questions: [
-        '1. What am I grateful for today?',
-        '2. What am I avoiding?',
-        '3. What am I excited about today?',
+       '1. How are my quaterly quests going?',
+        '2. Am I on track or off track? If off track, what can I do to get back on track?',
+        
       ],
     },
     {
-      title: 'Reflect',
+      title: 'Reflect: Review your week',
       questions: [
-        '1. What did I learn this week?',
-        '2. What challenged me?',
-        '3. What am I proud of?',
+        '1. What went well this past week? Acknowledge the progress achieved(big or small)',
+        '2. What did not go so well? What did I learn from it?',
+        '3. In what ways i did not act in line with my intentions for last week?',
+        '4. What would I like to change(if anything) next week?',
       ],
     },
     {
-      title: 'Organize',
+      title: 'Organise: Plan for the week ahead',
       questions: [
-        '1. What are my top priorities for next week?',
-        '2. What can I delegate or defer?',
-        '3. What habits do I want to improve?',
+        '1. Look ahead two weeks and create calendar blocks based on upcoming projects, meetings and personal events',
+        '2. How can I prepare to have a joyful week?',
+        '3. What three things would I like to accomplish in order to have the best possible week?',
+        
       ],
     },
-    {
-      title: 'Commit',
-      questions: [
-        '1. What am I committing to change?',
-        '2. What support do I need?',
-        '3. What will success look like?',
-      ],
-    },
+   
   ];
 
   // Timer durations for each card (in seconds)
-  const timerDurations = [4, 4, 4, 4];
+  const timerDurations = [4, 4, 4];
 
   const handleButtonPress = () => {
     if (!isTimerRunning) {
