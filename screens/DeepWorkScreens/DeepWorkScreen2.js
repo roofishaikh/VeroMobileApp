@@ -420,21 +420,46 @@ function DeepWorkScreen2({ navigation }) {
     setLongPressActive(true);
     setTimeout(() => {
       setLongPressActive(false);
+      
+      // Stop and reset the timer
+      if (timerRef.current) {
+        timerRef.current.reset();
+      }
+      
+      // Reset timer state
+      setTimerState(prev => ({
+        ...prev,
+        isRunning: false,
+        isPaused: false,
+        timeLeft: 0,
+        totalTime: 0,
+        timeSet: false
+      }));
+      
+      // Reset button text
+      setButtonText("START DEEP WORK");
+      
       // Calculate focused time in seconds
       const focusedSeconds = (timerState.totalTime || 0) - (timerState.timeLeft || 0);
       // Format as mm:ss
       const minutes = Math.floor(focusedSeconds / 60);
       const seconds = focusedSeconds % 60;
       const focusedTime = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+      
       const currentGoal = centerDeck[0];
       const totalSubgoals = currentGoal?.subgoals?.length || 0;
       const completedSubgoals = currentGoal?.subgoals?.filter(sg => sg.isCompleted).length || 0;
+      
+      // Record this as a completed deep work session
+      const updatedSessionCount = sessionCount + 1;
+      setSessionCount(updatedSessionCount);
+      
       navigation.navigate('Reflect', {
         goalTitle: currentGoal?.text || '',
         focusedTime,
         completedSubgoals,
         totalSubgoals,
-        sessionCount
+        sessionCount: updatedSessionCount
       });
     }, 3000);
   };
