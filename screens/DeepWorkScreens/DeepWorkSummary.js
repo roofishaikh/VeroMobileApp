@@ -31,7 +31,7 @@ export default function DeepWorkSummary() {
                     <Image source={require('../../assets/icons/VeroListening.png')}
                         style={{height: 40, width: 40, alignSelf: "flex-end"}}  />
                     <View style={styles.GoalsCompletedChecklist}>
-                        <Text>{goalTitle}</Text>
+                        <Text style={{fontSize: 20, fontWeight: 'bold'}}>{goalTitle}</Text>
                     </View>
                         <View style={styles.DeepWorkSummaryContainer}>
 

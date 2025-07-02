@@ -429,7 +429,7 @@ function DeepWorkScreen2({ navigation }) {
       const currentGoal = centerDeck[0];
       const totalSubgoals = currentGoal?.subgoals?.length || 0;
       const completedSubgoals = currentGoal?.subgoals?.filter(sg => sg.isCompleted).length || 0;
-      navigation.navigate('DeepWorkScreen4', {
+      navigation.navigate('Reflect', {
         goalTitle: currentGoal?.text || '',
         focusedTime,
         completedSubgoals,
