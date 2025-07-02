@@ -467,6 +467,14 @@ function DeepWorkScreen2({ navigation }) {
     setLongPressActive(false);
   };
 
+  const handleGoalTitleChange = (newText) => {
+    if (centerDeck[0]) {
+      const updatedGoals = [...centerDeck];
+      updatedGoals[0] = { ...updatedGoals[0], text: newText };
+      setCenterDeck(updatedGoals);
+    }
+  };
+
   return (
     <GradientScreenWrapper>
       {isLoading ? (
@@ -491,11 +499,7 @@ function DeepWorkScreen2({ navigation }) {
             gestureHandler={gestureHandler}
             handleAdd={handleAdd}
             handleDelete={handleDelete}
-            validateAndUpdateGoalTitle={validateAndUpdateGoalTitle}
-            validateAndUpdateSubgoal={validateAndUpdateSubgoal}
-            getValidationError={getValidationError}
-            hasValidationErrors={hasValidationErrors}
-            validationErrors={validationErrors}
+            onGoalTitleChange={handleGoalTitleChange}
             MAX_GOAL_TITLE_LENGTH={MAX_GOAL_TITLE_LENGTH}
             MAX_SUBGOAL_LENGTH={MAX_SUBGOAL_LENGTH}
             toggleSubgoal={toggleSubgoal}
