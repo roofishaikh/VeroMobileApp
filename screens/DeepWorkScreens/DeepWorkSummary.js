@@ -4,10 +4,14 @@ import PrimaryButton from "../../components/primaryButton";
 import FocusCard from "../../components/FocusCard";
 import Screen1QuesionsCard from "../../components/Screen1QuestiosCard";
 import React from "react";
+import { useRoute } from '@react-navigation/native';
 
 
 
 export default function DeepWorkSummary() {
+    const route = useRoute();
+    const goalTitle = route.params?.goalTitle || 'No goal selected';
+    const focusedTime = route.params?.focusedTime || '--:--';
 
     return(
         <View style={styles.outterContainer}>
@@ -24,13 +28,13 @@ export default function DeepWorkSummary() {
                     <Image source={require('../../assets/icons/VeroListening.png')}
                         style={{height: 40, width: 40, alignSelf: "flex-end"}}  />
                     <View style={styles.GoalsCompletedChecklist}>
-                        <Text>checkbox + goals from goalscard</Text>
+                        <Text>{goalTitle}</Text>
                     </View>
                         <View style={styles.DeepWorkSummaryContainer}>
 
                        <View style={styles.resultCardProps}>
                          <Text style={styles.resultText1}>Time Focused</Text>
-                        <Text style={styles.resultText2}>48 mins</Text>
+                        <Text style={styles.resultText2}>{focusedTime}</Text>
                        </View>
 
                        <View style={styles.resultCardProps}>

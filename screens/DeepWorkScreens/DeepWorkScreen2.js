@@ -417,8 +417,13 @@ function DeepWorkScreen2({ navigation }) {
     setLongPressActive(true);
     setTimeout(() => {
       setLongPressActive(false);
-      // End session and navigate as before
-      navigation.navigate("DeepWorkScreen3");
+      // Calculate focused time in seconds
+      const focusedSeconds = (timerState.totalTime || 0) - (timerState.timeLeft || 0);
+      // Format as mm:ss
+      const minutes = Math.floor(focusedSeconds / 60);
+      const seconds = focusedSeconds % 60;
+      const focusedTime = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+      navigation.navigate('DeepWorkScreen4', { goalTitle: centerDeck[0]?.text || '', focusedTime });
     }, 3000);
   };
   const handlePrimaryButtonLongPressEnd = () => {
