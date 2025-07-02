@@ -503,7 +503,6 @@ function DeepWorkScreen2({ navigation }) {
             addSubgoalWithText={addSubgoalWithText}
             newSubgoalText={newSubgoalText}
             setNewSubgoalText={setNewSubgoalText}
-            styles={styles}
           />
         </>
       )}
@@ -555,175 +554,21 @@ function DeepWorkScreen2({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-  },
-  swipeZone: {
-    width: Math.min(SCREEN_WIDTH * 0.85, 420),
-    height: SCREEN_HEIGHT < 700 ? SCREEN_HEIGHT * 0.45 : SCREEN_HEIGHT * 0.50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderColor: '#f60000',
-    borderWidth: 1,
-    alignSelf: "center",
-    marginTop: 60,
-  },
-  card: {
-    position: 'absolute',
-    width: Math.min(SCREEN_WIDTH * 0.85, 420),
-    height: SCREEN_HEIGHT < 700 ? SCREEN_HEIGHT * 0.45 : SCREEN_HEIGHT * 0.50,
-    backgroundColor: '#FFF5E0',
-    borderRadius: 16,
-    justifyContent: 'center',
-    padding: 10,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 4,
-  },
-  cardText: {
-    fontSize: 30,
-    color: '#333',
-    textAlign: 'center',
-    marginBottom: 20,
-    fontWeight: "bold",
-  },
-  inputError: {
-    borderColor: '#F45B47',
-    borderWidth: 1,
-  },
-  errorText: {
-    color: '#F45B47',
-    marginBottom: 10,
-  },
-  charCount: {
-    alignSelf: 'flex-end',
-    color: '#999',
-  },
-  subgoalRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 5,
-    flexWrap: 'wrap',
-    maxWidth: '100%',
-    paddingHorizontal: 10,
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  checkboxContainer: {
-    marginRight: 8,
-  },
-  checkbox: {
-    margin: 0,
-    padding: 0,
-  },
-  subgoalInputContainer: {
-    flex: 1,
-  },
-  subgoalText: {
-    fontSize: 16,
-    borderBottomWidth: 1,
-    borderColor: '#ccc',
-    flex: 1,
-    flexShrink: 1,
-    padding: 4,
-    color: '#000',
-    marginRight: 8,
-  },
-  completedSubgoalText: {
-    textDecorationLine: 'line-through',
-    color: '#888',
-    borderBottomColor: '#888',
-  },
-  deleteSubgoalButton: {
-    margin: 0,
-    padding: 0,
-  },
-  iconRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '60%',
-    marginTop: 20,
-    alignSelf: "center",
-    position: "absolute",
-    bottom: 10,
-  },
-  iconButton: {
-    padding: 10,
-    backgroundColor: '#fff',
-    borderRadius: 30,
-    elevation: 3,
-  },
-  validationSummary: {
-    backgroundColor: '#fff',
-    padding: 10,
-    borderRadius: 8,
-    marginTop: 10,
-  },
-  validationSummaryTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  validationSummaryItem: {
-    fontSize: 16,
-    marginBottom: 5,
-  },
-  addSubgoalSection: {
-    flexDirection: 'column',
-    padding: 10,
-    marginTop: 10,
-  },
-  newSubgoalInput: {
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    marginBottom: 10,
-    backgroundColor: '#fff',
-  },
-  addSubgoalButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 10,
-    alignSelf: 'center',
-  },
-  addSubgoalButtonDisabled: {
-    opacity: 0.5,
-  },
-  addSubgoalText: {
-    color: '#4CAF50',
-    marginLeft: 5,
-    fontSize: 16,
-  },
-  addSubgoalTextDisabled: {
-    color: '#ccc',
-  },
   timerWrapper: {
     marginTop: Math.max(SCREEN_HEIGHT * 0.04, 18),
     marginBottom: Math.max(SCREEN_HEIGHT * 0.04, 18),
     alignItems: 'center',
     alignSelf: 'center',
     zIndex: 2,
-    borderWidth: 2,
-    borderColor: '#000000',
+    // borderWidth: 2,
+    // borderColor: '#000000',
   },
   timerControlsContainer: {
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
-    borderWidth: 2,
-    borderColor: 'blue',
+    // borderWidth: 2,
+    // borderColor: 'blue',
   },
   setTimeWrapper: {
     position: 'absolute',
@@ -732,16 +577,16 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     zIndex: 5,
     elevation: 10,
-    borderWidth: 4,
-    borderColor: 'green',
+    // borderWidth: 4,
+    // borderColor: 'green',
   },
   buttonWrapper: {
     position: 'absolute',
     bottom: 100,
     alignSelf: 'baseline',
     width: '100%',
-    borderWidth: 2,
-    borderColor: 'red',
+    // borderWidth: 2,
+    // borderColor: 'red',
   },
   loadingContainer: {
     flex: 1,
