@@ -74,7 +74,7 @@ export default function CheckInScreen4() {
              </View>
 
             <PrimaryButton 
-              text="Finish Check-In"
+              text="SKIP"
               style={styles.startButton}
               onTap={handleSkip}
             />

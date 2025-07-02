@@ -19,6 +19,7 @@ export default function CheckInScreen3() {
         setSelectedEnergyLevel(level);
         updateCheckInData('energyLevel', level);
         // Navigate to next screen after recording energy level
+        if(selectedMentalClarity !== null && selectedMentalClarity !== '') 
         navigation.navigate('CheckInScreen4');
     };
 
@@ -26,6 +27,7 @@ export default function CheckInScreen3() {
         setSelectedMentalClarity(clarity);
         updateCheckInData('mentalClarity', clarity);
         // Navigate to next screen after recording mental clarity
+        if(selectedEnergyLevel !== null && selectedEnergyLevel !== '') 
         navigation.navigate('CheckInScreen4');
     };
 
@@ -103,7 +105,7 @@ export default function CheckInScreen3() {
              </View>
 
             <PrimaryButton 
-              text="NEXT"
+              text="SKIP"
               style={styles.startButton}
               onTap={handleSkip}
             />

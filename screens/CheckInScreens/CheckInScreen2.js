@@ -65,7 +65,7 @@ export default function CheckInScreen2() {
              </View>
 
             <PrimaryButton 
-              text="SAVE EMOTION"
+              text="SKIP"
               style={styles.startButton}
               onTap={handleSkip}
             />
