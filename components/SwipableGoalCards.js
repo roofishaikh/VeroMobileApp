@@ -4,7 +4,6 @@ import { PanGestureHandler } from 'react-native-gesture-handler';
 import Animated from 'react-native-reanimated';
 import { MaterialIcons } from '@expo/vector-icons';
 import { IconButton, Checkbox } from 'react-native-paper';
-import DraggableFlatList from 'react-native-draggable-flatlist';
 
 // Accept all necessary props for full control from parent
 const SwipableGoalCards = ({
@@ -27,8 +26,7 @@ const SwipableGoalCards = ({
   addSubgoalWithText,
   newSubgoalText,
   setNewSubgoalText,
-  styles,
-  onReorderSubgoals
+  styles
 }) => {
   // Add null/undefined check for goals
   if (!goals || !Array.isArray(goals)) {
@@ -84,70 +82,49 @@ const SwipableGoalCards = ({
                   {(goals[0]?.text || '').length}/{MAX_GOAL_TITLE_LENGTH}
                 </Text>
                 {/* Draggable subgoals */}
-                <DraggableFlatList
-                  data={(goals[0]?.subgoals || []).filter(Boolean)}
-                  keyExtractor={item => item.id.toString()}
-                  renderItem={({ item, index, drag, isActive }) => {
-                    if (!item) return null;
-                    return (
-                      <View
-                        style={{
-                          backgroundColor: '#FFF5E0',
-                          opacity: isActive ? 0.8 : 1,
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          marginVertical: 5,
-                          borderRadius: 8,
-                          padding: 8,
+                {goals[0]?.subgoals?.map((sub, index) => (
+                  <View key={sub.id} style={styles.subgoalContainer}>
+                    <Pressable
+                      onPress={() => toggleSubgoal(0, index)}
+                      style={styles.subgoalButton}
+                    >
+                      <Checkbox
+                        status={sub.isCompleted === true ? 'checked' : 'unchecked'}
+                        color="#4CAF50"
+                        uncheckedColor="#ccc"
+                      />
+                    </Pressable>
+                    <View style={styles.subgoalTextContainer}>
+                      <TextInput
+                        value={sub.text}
+                        placeholder="Enter subgoal..."
+                        placeholderTextColor="#999"
+                        onChangeText={(newText) => {
+                          validateAndUpdateSubgoal(0, index, newText);
                         }}
-                      >
-                        <Pressable
-                          onPress={() => toggleSubgoal(0, index)}
-                          onLongPress={drag}
-                          delayLongPress={150}
-                          style={{ marginRight: 8 }}
-                        >
-                          <Checkbox
-                            status={item.isCompleted === true ? 'checked' : 'unchecked'}
-                            color="#4CAF50"
-                            uncheckedColor="#ccc"
-                          />
-                        </Pressable>
-                        <View style={{ flex: 1 }}>
-                          <TextInput
-                            value={item.text}
-                            placeholder="Enter subgoal..."
-                            placeholderTextColor="#999"
-                            onChangeText={(newText) => {
-                              validateAndUpdateSubgoal(0, index, newText);
-                            }}
-                            style={[
-                              styles.subgoalText,
-                              item.isCompleted && styles.completedSubgoalText,
-                              getValidationError && getValidationError(0, index) && styles.inputError
-                            ]}
-                          />
-                          <Text style={styles.charCount}>
-                            {item.text.length}/{MAX_SUBGOAL_LENGTH}
-                          </Text>
-                        </View>
-                        <IconButton
-                          icon="delete"
-                          size={20}
-                          onPress={() => deleteSubgoal(0, index)}
-                          style={styles.deleteSubgoalButton}
-                        />
-                      </View>
-                    );
-                  }}
-                  onDragEnd={({ data }) => onReorderSubgoals(0, data)}
-                  scrollEnabled={false}
-                />
+                        style={[
+                          styles.subgoalText,
+                          sub.isCompleted && styles.completedSubgoalText,
+                          getValidationError && getValidationError(0, index) && styles.inputError
+                        ]}
+                      />
+                      <Text style={styles.charCount}>
+                        {sub.text.length}/{MAX_SUBGOAL_LENGTH}
+                      </Text>
+                    </View>
+                    <IconButton
+                      icon="delete"
+                      size={20}
+                      onPress={() => deleteSubgoal(0, index)}
+                      style={styles.deleteSubgoalButton}
+                    />
+                  </View>
+                ))}
                 {/* Show subgoal validation errors */}
-                {(goals[0]?.subgoals || []).filter(Boolean).map((sub, subIdx) => 
-                  getValidationError && getValidationError(0, subIdx) && (
-                    <Text key={`error-${sub?.id ?? subIdx}`} style={styles.errorText}>
-                      {getValidationError(0, subIdx)}
+                {goals[0]?.subgoals?.map((sub, index) => 
+                  getValidationError && getValidationError(0, index) && (
+                    <Text key={`error-${sub?.id ?? index}`} style={styles.errorText}>
+                      {getValidationError(0, index)}
                     </Text>
                   )
                 )}

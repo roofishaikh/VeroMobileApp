@@ -480,7 +480,6 @@ function DeepWorkScreen2({ navigation }) {
             rightPile={rightPile}
             leftPileScale={leftPileScale}
             rightPileScale={rightPileScale}
-            styles={styles}
           />
 
           {/* Main Swipe Zone - Restored to original */}
@@ -505,7 +504,6 @@ function DeepWorkScreen2({ navigation }) {
             newSubgoalText={newSubgoalText}
             setNewSubgoalText={setNewSubgoalText}
             styles={styles}
-            onReorderSubgoals={handleReorderSubgoals}
           />
         </>
       )}
@@ -717,25 +715,33 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
     zIndex: 2,
+    borderWidth: 2,
+    borderColor: '#000000',
   },
   timerControlsContainer: {
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
+    borderWidth: 2,
+    borderColor: 'blue',
   },
   setTimeWrapper: {
     position: 'absolute',
     top: '35%',
     width: '85%',
     alignSelf: 'center',
-    zIndex: 20,
+    zIndex: 5,
     elevation: 10,
+    borderWidth: 4,
+    borderColor: 'green',
   },
   buttonWrapper: {
     position: 'absolute',
     bottom: 100,
     alignSelf: 'baseline',
     width: '100%',
+    borderWidth: 2,
+    borderColor: 'red',
   },
   loadingContainer: {
     flex: 1,
