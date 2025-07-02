@@ -12,6 +12,9 @@ export default function DeepWorkSummary() {
     const route = useRoute();
     const goalTitle = route.params?.goalTitle || 'No goal selected';
     const focusedTime = route.params?.focusedTime || '--:--';
+    const completedSubgoals = route.params?.completedSubgoals ?? 0;
+    const totalSubgoals = route.params?.totalSubgoals ?? 0;
+    const sessionCount = route.params?.sessionCount ?? 0;
 
     return(
         <View style={styles.outterContainer}>
@@ -39,12 +42,12 @@ export default function DeepWorkSummary() {
 
                        <View style={styles.resultCardProps}>
                          <Text style={styles.resultText1}>Tasks Completed</Text>
-                        <Text style={styles.resultText2}>2</Text>
+                        <Text style={styles.resultText2}>{`${completedSubgoals}/${totalSubgoals}`}</Text>
                        </View>
 
                        <View style={styles.resultCardProps}>
                          <Text style={styles.resultText1}>Deep Work Sessions</Text>
-                        <Text style={styles.resultText2}>3</Text>
+                        <Text style={styles.resultText2}>{sessionCount}</Text>
                        </View>
 
                        <View style={{marginTop: 10}}>

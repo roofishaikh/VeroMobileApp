@@ -389,6 +389,7 @@ function DeepWorkScreen2({ navigation }) {
   };
 
   // Button tap logic
+  const [sessionCount, setSessionCount] = useState(0);
   const handlePrimaryButtonTap = () => {
     console.log('Button tapped!', {
       isDragging: timerState.isDragging,
@@ -402,6 +403,8 @@ function DeepWorkScreen2({ navigation }) {
     if (!timerState.timeSet || timerState.totalTime === 0) return; // Ignore if no time set
     
     if (!timerState.isRunning && !timerState.isPaused) {
+      // Starting a new session
+      setSessionCount((count) => count + 1);
       console.log('Starting timer...');
       timerRef.current?.start();
     } else if (timerState.isPaused) {
@@ -423,7 +426,16 @@ function DeepWorkScreen2({ navigation }) {
       const minutes = Math.floor(focusedSeconds / 60);
       const seconds = focusedSeconds % 60;
       const focusedTime = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-      navigation.navigate('DeepWorkScreen4', { goalTitle: centerDeck[0]?.text || '', focusedTime });
+      const currentGoal = centerDeck[0];
+      const totalSubgoals = currentGoal?.subgoals?.length || 0;
+      const completedSubgoals = currentGoal?.subgoals?.filter(sg => sg.isCompleted).length || 0;
+      navigation.navigate('DeepWorkScreen4', {
+        goalTitle: currentGoal?.text || '',
+        focusedTime,
+        completedSubgoals,
+        totalSubgoals,
+        sessionCount
+      });
     }, 3000);
   };
   const handlePrimaryButtonLongPressEnd = () => {
