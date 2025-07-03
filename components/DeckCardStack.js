@@ -37,6 +37,23 @@ const DeckCardStack = ({
     );
   }
 
+  // Always call 3 useAnimatedStyle hooks for the 3 possible visible cards
+  const stackStyles = [0, 1, 2].map((stackIndex) =>
+    useAnimatedStyle(() => {
+      const baseScale = 1 - stackIndex * 0.05;
+      const baseTranslateY = stackIndex * 8;
+      const baseOpacity = 1 - stackIndex * 0.2;
+      return {
+        transform: [
+          { scale: withSpring(baseScale, { damping: 15 }) },
+          { translateY: withSpring(baseTranslateY, { damping: 15 }) },
+        ],
+        opacity: withSpring(baseOpacity, { damping: 15 }),
+        zIndex: 100 - stackIndex,
+      };
+    })
+  );
+
   // Calculate which cards to show (current + next 2 cards)
   const getVisibleCards = () => {
     const cards = [];
@@ -53,25 +70,9 @@ const DeckCardStack = ({
 
   const visibleCards = getVisibleCards();
 
-  const renderCard = (cardData, isTopCard = false) => {
+  const renderCard = (cardData, isTopCard = false, stackStyle) => {
     const { goal, index, stackIndex } = cardData;
     
-    // Calculate stack positioning
-    const stackStyle = useAnimatedStyle(() => {
-      const baseScale = 1 - stackIndex * 0.05; // Each card slightly smaller
-      const baseTranslateY = stackIndex * 8; // Each card slightly lower
-      const baseOpacity = 1 - stackIndex * 0.2; // Each card slightly more transparent
-      
-      return {
-        transform: [
-          { scale: withSpring(baseScale, { damping: 15 }) },
-          { translateY: withSpring(baseTranslateY, { damping: 15 }) },
-        ],
-        opacity: withSpring(baseOpacity, { damping: 15 }),
-        zIndex: 100 - stackIndex, // Higher cards have higher z-index
-      };
-    });
-
     const cardContent = (
       <ScrollView
         style={{ flexGrow: 1 }}
@@ -194,7 +195,9 @@ const DeckCardStack = ({
       {/* Render cards from bottom to top (background to foreground) */}
       {visibleCards.slice().reverse().map((cardData, renderIndex) => {
         const isTopCard = renderIndex === visibleCards.length - 1;
-        return renderCard(cardData, isTopCard);
+        // Use the precomputed stackStyle for this card (up to 3)
+        const stackStyle = stackStyles[visibleCards.length - 1 - renderIndex];
+        return renderCard(cardData, isTopCard, stackStyle);
       })}
     </View>
   );
