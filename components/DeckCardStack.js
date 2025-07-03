@@ -1,47 +1,13 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  Modal,
-  TextInput,
-  Image,
-  TouchableOpacity,
-  ScrollView,
-  Dimensions,
-} from 'react-native';
-import PrimaryButton from './primaryButton';
+import React from 'react';
+import { View, StyleSheet, Dimensions, Text, Pressable, ScrollView, TextInput } from 'react-native';
 import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import { PanGestureHandler } from 'react-native-gesture-handler';
 import { MaterialIcons } from '@expo/vector-icons';
 import { IconButton, Checkbox } from 'react-native-paper';
 
-const initialGoals = [
-  {
-    id: '1',
-    title: 'Launch New Website',
-    subGoals: [
-      { text: 'Finalize pitch deck', done: false },
-      { text: 'Create homepage', done: false },
-      { text: 'Plan launch event', done: false },
-    ],
-  },
-  {
-    id: '2',
-    title: 'Prepare Talk',
-    subGoals: [
-      { text: 'Draft outline', done: false },
-      { text: 'Design slides', done: false },
-      { text: 'Rehearse', done: false },
-    ],
-  },
-];
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
-const SCREEN_WIDTH = Dimensions.get('window').width;
-const CARD_WIDTH = SCREEN_WIDTH * 0.85;
-
-const CardStack = ({
+const DeckCardStack = ({
   goals,
   currentCardIndex,
   animatedCardStyle,
@@ -57,44 +23,6 @@ const CardStack = ({
   MAX_GOAL_TITLE_LENGTH,
   MAX_SUBGOAL_LENGTH,
 }) => {
-  const [modalVisible, setModalVisible] = useState(false);
-  const [editingGoal, setEditingGoal] = useState(null);
-
-  const toggleSubGoal = (goalIndex, subIndex) => {
-    const updated = [...goals];
-    updated[goalIndex].subGoals[subIndex].done =
-      !updated[goalIndex].subGoals[subIndex].done;
-    setGoals(updated);
-  };
-
-  const openEditModal = (index) => {
-    setEditingGoal({ ...goals[index], index });
-    setModalVisible(true);
-  };
-
-  const saveGoalChanges = () => {
-    const updated = [...goals];
-    updated[editingGoal.index] = {
-      id: editingGoal.id,
-      title: editingGoal.title,
-      subGoals: editingGoal.subGoals,
-    };
-    setGoals(updated);
-    setModalVisible(false);
-  };
-
-  const addNewGoal = () => {
-    const newGoal = {
-      id: Date.now().toString(),
-      title: 'New Goal',
-      subGoals: [
-        { text: 'Subtask 1', done: false },
-        { text: 'Subtask 2', done: false },
-      ],
-    };
-    setGoals([newGoal, ...goals]);
-  };
-
   if (!goals || !Array.isArray(goals) || goals.length === 0) {
     return (
       <View style={styles.swipeZone}>
@@ -154,21 +82,21 @@ const CardStack = ({
         <TextInput
           style={styles.cardText}
           placeholder="Enter goal title..."
-          value={goal?.title || ''}
+          value={goal?.text || ''}
           onChangeText={(newText) => {
             if (onGoalTitleChange) {
               onGoalTitleChange(newText);
             }
           }}
         />
-        {goal?.subGoals?.map((sub, subIndex) => (
+        {goal?.subgoals?.map((sub, subIndex) => (
           <View key={sub.id} style={styles.subgoalContainer}>
             <Pressable
               onPress={() => toggleSubgoal(index, subIndex)}
               style={styles.subgoalButton}
             >
               <Checkbox
-                status={sub.done === true ? 'checked' : 'unchecked'}
+                status={sub.isCompleted === true ? 'checked' : 'unchecked'}
                 color="#4CAF50"
                 uncheckedColor="#ccc"
               />
@@ -272,12 +200,10 @@ const CardStack = ({
   );
 };
 
-export default CardStack;
-
 const styles = StyleSheet.create({
   swipeZone: {
     width: Math.min(SCREEN_WIDTH * 0.85, 420),
-    height: SCREEN_WIDTH < 700 ? SCREEN_WIDTH * 0.45 : SCREEN_WIDTH * 0.50,
+    height: SCREEN_HEIGHT < 700 ? SCREEN_HEIGHT * 0.45 : SCREEN_HEIGHT * 0.50,
     justifyContent: 'center',
     alignItems: 'center',
     borderColor: '#f60000',
@@ -289,7 +215,7 @@ const styles = StyleSheet.create({
   card: {
     position: 'absolute',
     width: Math.min(SCREEN_WIDTH * 0.85, 420),
-    height: SCREEN_WIDTH < 700 ? SCREEN_WIDTH * 0.45 : SCREEN_WIDTH * 0.50,
+    height: SCREEN_HEIGHT < 700 ? SCREEN_HEIGHT * 0.45 : SCREEN_HEIGHT * 0.50,
     backgroundColor: '#FFF5E0',
     borderRadius: 16,
     justifyContent: 'center',
@@ -371,3 +297,5 @@ const styles = StyleSheet.create({
     padding: 8,
   },
 });
+
+export default DeckCardStack; 

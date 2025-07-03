@@ -18,7 +18,7 @@ import { Checkbox, IconButton } from 'react-native-paper';
 import { MaterialIcons } from "@expo/vector-icons";
 import { initialGoals } from "../../Data/goalsData";
 import * as SecureStore from 'expo-secure-store';
-import SwipableGoalCards from '../../components/SwipableGoalCards';
+import DeckCardStack from '../../components/DeckCardStack';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.25;
@@ -85,6 +85,8 @@ function DeepWorkScreen2({ navigation }) {
   // Animation state for card gestures
   const translateX = useSharedValue(0);
   const rotate = useSharedValue(0);
+  const scale = useSharedValue(1);
+  const opacity = useSharedValue(1);
 
   // TIMER STATE
   const timerRef = useRef();
@@ -170,6 +172,11 @@ function DeepWorkScreen2({ navigation }) {
     onActive: (event) => {
       translateX.value = event.translationX;
       rotate.value = event.translationX / 20;
+      
+      // Scale and opacity effects during swipe
+      const progress = Math.abs(event.translationX) / SWIPE_THRESHOLD;
+      scale.value = withSpring(1 - progress * 0.1, { damping: 15 });
+      opacity.value = withSpring(1 - progress * 0.3, { damping: 15 });
     },
     onEnd: () => {
       if (Math.abs(translateX.value) > SWIPE_THRESHOLD) {
@@ -182,11 +189,15 @@ function DeepWorkScreen2({ navigation }) {
             // Reset animation values for the next card
             translateX.value = 0;
             rotate.value = 0;
+            scale.value = withSpring(1);
+            opacity.value = withSpring(1);
           }
         );
       } else {
         translateX.value = withSpring(0);
         rotate.value = withSpring(0);
+        scale.value = withSpring(1);
+        opacity.value = withSpring(1);
       }
     },
   });
@@ -195,7 +206,9 @@ function DeepWorkScreen2({ navigation }) {
     transform: [
       { translateX: translateX.value },
       { rotateZ: `${rotate.value}deg` },
+      { scale: scale.value },
     ],
+    opacity: opacity.value,
   }));
 
   const handleDelete = () => {
@@ -504,7 +517,7 @@ function DeepWorkScreen2({ navigation }) {
       ) : (
         <>
           {/* Main Swipe Zone */}
-          <SwipableGoalCards
+          <DeckCardStack
             goals={centerDeck}
             currentCardIndex={currentCardIndex}
             animatedCardStyle={animatedCardStyle}
