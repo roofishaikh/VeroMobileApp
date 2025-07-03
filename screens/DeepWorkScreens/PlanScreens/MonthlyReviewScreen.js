@@ -4,6 +4,8 @@ import GradientScreenWrapper from "../../../components/GradientScreenWrapper";
 import TimeTimer from "../../../components/TimeTimer";
 import PrimaryButton from "../../../components/primaryButton";
 import CountdownTimer from "../../../components/CountdownTimer";
+import { useNavigation } from '@react-navigation/native';
+import * as SecureStore from 'expo-secure-store';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -17,6 +19,8 @@ function MonthlyReviewScreen() {
   const slideAnimation = useRef(new Animated.Value(0)).current;
   const [activeTimerIndex, setActiveTimerIndex] = useState(0);
   const [fallbackTimerKey, setFallbackTimerKey] = useState(0);
+  const navigation = useNavigation();
+  const [reviewComplete, setReviewComplete] = useState(false);
   
   // Define the card deck with 4 cards, each with unique questions
   const cards = [
@@ -25,7 +29,6 @@ function MonthlyReviewScreen() {
       questions: [
         '1. How are my quaterly quests going?',
         '2. Am I on track or off track? If off track, what can I do to get back on track?',
-        
       ],
     },
     {
@@ -43,7 +46,6 @@ function MonthlyReviewScreen() {
         '1. What are the key priorities and goals we need to focus on?',
         '2. How can we adjust to stay on track with our goals?',
         '3. What are the biggest risks or challanges we anticipate, and how can we prepare for them?',
-        '4. What resources or support do we need to achieve our goals?',
       ],
     },
     {
@@ -52,7 +54,6 @@ function MonthlyReviewScreen() {
         '1. Look ahead two weeks and create calendar blocks based on upcoming projects, meetings and personal events',
         '2. How can I prepare to have a joyful week?',
         '3. What three things would I like to accomplish in order to have the best possible week?',
-        
       ],
     },
   ];
@@ -85,6 +86,9 @@ function MonthlyReviewScreen() {
     setTimerText(`${minutes}:${seconds.toString().padStart(2, '0')}`);
   };
 
+  // Get the current card data
+  const currentCard = cards[currentCardIndex];
+
   // Set initial time to 10 minutes when component mounts
   React.useEffect(() => {
     if (timerRef.current) {
@@ -115,16 +119,41 @@ function MonthlyReviewScreen() {
     }
   };
 
-  const handleTimerComplete = (timerIndex) => {
-    // Move to next timer
-    const nextTimerIndex = (timerIndex + 1) % timerDurations.length;
-    setActiveTimerIndex(nextTimerIndex);
-    
-    // Move to next card
-    const nextCardIndex = (currentCardIndex + 1) % cards.length;
-    setCurrentCardIndex(nextCardIndex);
-    
-    // Reset fallback timer to sync with next timer
+  // Add a function to mark monthly ritual complete
+  async function markMonthlyRitualComplete() {
+    const today = new Date().toISOString().slice(0, 10);
+    let habitJson = await SecureStore.getItemAsync('vero_habit_data');
+    let habitObj = habitJson ? JSON.parse(habitJson) : {};
+    if (!habitObj[today]) habitObj[today] = {};
+    habitObj[today]['monthly_ritual'] = true;
+    await SecureStore.setItemAsync('vero_habit_data', JSON.stringify(habitObj));
+  }
+
+  // Add a function to reset state
+  const resetMonthlyReview = () => {
+    setCurrentCardIndex(0);
+    setActiveTimerIndex(0);
+    setFallbackTimerKey(prev => prev + 1); // force fallback timer to reset
+    setIsTimerRunning(false);
+    setButtonText("START JOURNALING");
+    setReviewComplete(false);
+  };
+
+  // Update timer complete logic to match WeeklyReviewScreen
+  const handleTimerComplete = async (timerIndex) => {
+    // If this was the 4th timer (index 3), mark monthly ritual complete and navigate
+    if (timerIndex === 3) {
+      setReviewComplete(true);
+      setIsTimerRunning(false);
+      timerRef.current?.reset();
+      await markMonthlyRitualComplete();
+      navigation.navigate('Insights');
+      resetMonthlyReview();
+      return;
+    }
+    // Move to next timer (no looping)
+    setActiveTimerIndex(timerIndex + 1);
+    setCurrentCardIndex(currentCardIndex + 1);
     setFallbackTimerKey(prev => prev + 1);
   };
 
@@ -132,9 +161,6 @@ function MonthlyReviewScreen() {
     // Fallback timer completed, trigger next timer
     handleTimerComplete(activeTimerIndex);
   };
-
-  // Get the current card data
-  const currentCard = cards[currentCardIndex];
 
   return (
     <GradientScreenWrapper>
@@ -164,18 +190,17 @@ function MonthlyReviewScreen() {
             <CountdownTimer
               key={`timer-${index}`}
               duration={duration}
-              isActive={index === activeTimerIndex}
+              isActive={!reviewComplete && index === activeTimerIndex}
               onComplete={() => handleTimerComplete(index)}
               colorIndex={index}
               showSeconds={false}
             />
           ))}
-          
           {/* Fallback Timer */}
           <CountdownTimer
             key={`fallback-${fallbackTimerKey}`}
             duration={timerDurations[activeTimerIndex]}
-            isActive={true}
+            isActive={!reviewComplete}
             onComplete={handleFallbackTimerComplete}
             isFallback={true}
             showSeconds={true}
