@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { View, StyleSheet, Dimensions, Text, Animated } from "react-native";
+import { View, StyleSheet, Dimensions, Text, Animated, ScrollView } from "react-native";
 import GradientScreenWrapper from "../../../components/GradientScreenWrapper";
 import TimeTimer from "../../../components/TimeTimer";
 import PrimaryButton from "../../../components/primaryButton";
@@ -61,6 +61,25 @@ function MonthlyReviewScreen() {
   // Timer durations for each card (in seconds)
   const timerDurations = [4, 4, 4, 4];
 
+  // Set initial time to 10 minutes when component mounts
+  React.useEffect(() => {
+    if (timerRef.current) {
+      // Set the timer to show 10 minutes on a 60-minute circle
+      timerRef.current.setInitialAngle(10);
+    }
+    setActiveTimerIndex(0);
+    setReviewComplete(false);
+    // Do NOT auto-start the timer here (matches WeeklyReviewScreen)
+    // setIsTimerRunning(true);
+
+    // Cleanup: reset timer state on unmount
+    return () => {
+      setIsTimerRunning(false);
+      timerRef.current?.reset();
+    };
+  }, []);
+
+  // Button press logic: start/stop timer
   const handleButtonPress = () => {
     if (!isTimerRunning) {
       // Start the timer
@@ -88,17 +107,6 @@ function MonthlyReviewScreen() {
 
   // Get the current card data
   const currentCard = cards[currentCardIndex];
-
-  // Set initial time to 10 minutes when component mounts
-  React.useEffect(() => {
-    if (timerRef.current) {
-      // Set the timer to show 10 minutes on a 60-minute circle
-      timerRef.current.setInitialAngle(10);
-    }
-    // Start the first countdown timer automatically when screen renders
-    setIsTimerRunning(true);
-    setActiveTimerIndex(0);
-  }, []);
 
   // Handle countdown timer completion - triggers auto-swipe
   const handleCountdownComplete = () => {
@@ -139,7 +147,7 @@ function MonthlyReviewScreen() {
     setReviewComplete(false);
   };
 
-  // Update timer complete logic to match WeeklyReviewScreen
+  // Update timer complete logic to match WeeklyReviewScreen (4 cards)
   const handleTimerComplete = async (timerIndex) => {
     // If this was the 4th timer (index 3), mark monthly ritual complete and navigate
     if (timerIndex === 3) {
@@ -175,12 +183,14 @@ function MonthlyReviewScreen() {
           ]}
         >
           <View style={styles.card}>
-            <Text style={styles.cardTitle}>{currentCard.title}</Text>
-            {currentCard.questions.map((question, index) => (
-              <Text key={index} style={styles.question}>
-                {question}
-              </Text>
-            ))}
+            <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
+              <Text style={styles.cardTitle}>{currentCard.title}</Text>
+              {currentCard.questions.map((question, index) => (
+                <Text key={index} style={styles.question}>
+                  {question}
+                </Text>
+              ))}
+            </ScrollView>
           </View>
         </Animated.View>
         
@@ -248,7 +258,7 @@ const styles = StyleSheet.create({
     padding: 30,
     marginHorizontal: 20,
     width: SCREEN_WIDTH - 40,
-    minHeight: 300,
+    height: 400,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
