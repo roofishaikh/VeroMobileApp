@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
+import * as SecureStore from 'expo-secure-store';
 
 const CheckInContext = createContext();
 
@@ -47,4 +48,14 @@ export const CheckInProvider = ({ children }) => {
       {children}
     </CheckInContext.Provider>
   );
-}; 
+};
+
+const HABIT_STORAGE_KEY = 'vero_habit_data';
+export async function markCheckInComplete() {
+  const today = new Date().toISOString().slice(0, 10);
+  let habitJson = await SecureStore.getItemAsync(HABIT_STORAGE_KEY);
+  let habitObj = habitJson ? JSON.parse(habitJson) : {};
+  if (!habitObj[today]) habitObj[today] = {};
+  habitObj[today].checkin = true;
+  await SecureStore.setItemAsync(HABIT_STORAGE_KEY, JSON.stringify(habitObj));
+} 

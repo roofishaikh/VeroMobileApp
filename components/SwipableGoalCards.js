@@ -4,8 +4,21 @@ import { PanGestureHandler } from 'react-native-gesture-handler';
 import Animated from 'react-native-reanimated';
 import { MaterialIcons } from '@expo/vector-icons';
 import { IconButton, Checkbox } from 'react-native-paper';
+import * as SecureStore from 'expo-secure-store';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+
+const HABIT_STORAGE_KEY = 'vero_habit_data';
+
+async function markGoalCompletedForToday(goalId) {
+  const today = new Date().toISOString().slice(0, 10);
+  let habitJson = await SecureStore.getItemAsync(HABIT_STORAGE_KEY);
+  let habitObj = habitJson ? JSON.parse(habitJson) : {};
+  if (!habitObj[today]) habitObj[today] = {};
+  if (!habitObj[today].goals) habitObj[today].goals = [];
+  if (!habitObj[today].goals.includes(goalId)) habitObj[today].goals.push(goalId);
+  await SecureStore.setItemAsync(HABIT_STORAGE_KEY, JSON.stringify(habitObj));
+}
 
 // Accept all necessary props for full control from parent
 const SwipableGoalCards = ({

@@ -3,13 +3,14 @@ import QuestionComponent from "../../components/QuestionComponent";
 import PrimaryButton from "../../components/primaryButton";
 import FocusCard from "../../components/FocusCard";
 import Screen1QuesionsCard from "../../components/Screen1QuestiosCard";
-import React from "react";
-import { useCheckIn } from "../../contexts/CheckInContext";
+import React, { useEffect } from "react";
+import { useCheckIn, markCheckInComplete } from "../../contexts/CheckInContext";
 
 
 
 export default function CheckInScreen5() {
     const { checkInData } = useCheckIn();
+    useEffect(() => { markCheckInComplete(); }, []);
 
     // Helper function to format the data for display
     const formatDisplayValue = (value) => {

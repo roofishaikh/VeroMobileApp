@@ -51,6 +51,21 @@ const validateSubgoal = (text, existingSubgoals, currentIndex = -1) => {
   return null; // null means valid
 };
 
+const HABIT_STORAGE_KEY = 'vero_habit_data';
+
+// Helper to mark goal accomplished in habit tracker
+async function markGoalAccomplishedToday(goalId) {
+  const today = new Date().toISOString().slice(0, 10);
+  let habitJson = await SecureStore.getItemAsync(HABIT_STORAGE_KEY);
+  let habitObj = habitJson ? JSON.parse(habitJson) : {};
+  if (!habitObj[today]) habitObj[today] = {};
+  if (!habitObj[today].goals) habitObj[today].goals = [];
+  if (!habitObj[today].goals.includes(goalId)) {
+    habitObj[today].goals.push(goalId);
+    await SecureStore.setItemAsync(HABIT_STORAGE_KEY, JSON.stringify(habitObj));
+  }
+}
+
 function DeepWorkScreen2({ navigation }) {
   const [showStopwatchCard, setShowStopwatchCard] = useState(false);
   const [showSetTimeCard, setShowSetTimeCard] = useState(false);
@@ -233,6 +248,14 @@ function DeepWorkScreen2({ navigation }) {
     if (!wasCompleted) {
       // Marking as completed - play success sound and show confetti
       setShowConfetti(true);
+    }
+
+    // Check if all subgoals for this goal are now completed
+    const allCompleted = updatedGoals[goalIndex].subgoals.length > 0 &&
+      updatedGoals[goalIndex].subgoals.every(sg => sg.isCompleted);
+    if (allCompleted) {
+      // Mark this goal as accomplished for today in SecureStore
+      markGoalAccomplishedToday(updatedGoals[goalIndex].id);
     }
   };
   
