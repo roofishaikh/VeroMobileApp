@@ -19,7 +19,6 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { initialGoals } from "../../Data/goalsData";
 import * as SecureStore from 'expo-secure-store';
 import SwipableGoalCards from '../../components/SwipableGoalCards';
-import CardPilesRL from '../../components/CardPilesRL';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.25;
@@ -70,8 +69,7 @@ function DeepWorkScreen2({ navigation }) {
   const [showStopwatchCard, setShowStopwatchCard] = useState(false);
   const [showSetTimeCard, setShowSetTimeCard] = useState(false);
   const [centerDeck, setCenterDeck] = useState([]);
-  const [leftPile, setLeftPile] = useState([]);
-  const [rightPile, setRightPile] = useState([]);
+  const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [nextId, setNextId] = useState(4);
   
   // Validation state
@@ -84,13 +82,9 @@ function DeepWorkScreen2({ navigation }) {
   // Loading state for persistence
   const [isLoading, setIsLoading] = useState(true);
 
-  // Pile state for visual representation
+  // Animation state for card gestures
   const translateX = useSharedValue(0);
   const rotate = useSharedValue(0);
-  
-  // Animated values for pile animations
-  const leftPileScale = useSharedValue(1);
-  const rightPileScale = useSharedValue(1);
 
   // TIMER STATE
   const timerRef = useRef();
@@ -159,24 +153,16 @@ function DeepWorkScreen2({ navigation }) {
   const handleSwiped = (direction) => {
     if (centerDeck.length === 0) return;
 
-    const [top, ...rest] = centerDeck;
-
     if (direction === 'right') {
-      setRightPile([top, ...rightPile]);
-      if (rest.length === 0 && leftPile.length > 0) {
-        setCenterDeck([leftPile[0]]);
-        setLeftPile(leftPile.slice(1));
-      } else {
-        setCenterDeck(rest);
-      }
+      // Swipe right: show previous card (n-1)
+      setCurrentCardIndex((prevIndex) => 
+        prevIndex === 0 ? centerDeck.length - 1 : prevIndex - 1
+      );
     } else if (direction === 'left') {
-      setLeftPile([top, ...leftPile]);
-      if (rest.length === 0 && rightPile.length > 0) {
-        setCenterDeck([rightPile[0]]);
-        setRightPile(rightPile.slice(1));
-      } else {
-        setCenterDeck(rest);
-      }
+      // Swipe left: show next card (n+1)
+      setCurrentCardIndex((prevIndex) => 
+        prevIndex === centerDeck.length - 1 ? 0 : prevIndex + 1
+      );
     }
   };
 
@@ -223,12 +209,23 @@ function DeepWorkScreen2({ navigation }) {
       rotate.value = withSpring(0);
       return;
     }
-    setCenterDeck((prev) => prev.slice(1));
+    
+    const updatedGoals = [...centerDeck];
+    updatedGoals.splice(currentCardIndex, 1);
+    setCenterDeck(updatedGoals);
+    
+    // Adjust currentCardIndex if necessary
+    if (currentCardIndex >= updatedGoals.length) {
+      setCurrentCardIndex(Math.max(0, updatedGoals.length - 1));
+    }
   };
 
   const handleAdd = () => {
-    setCenterDeck((prev) => [...prev, { id: nextId, text: `New Goal ${nextId}`, subgoals: [] }]);
+    const newGoal = { id: nextId, text: `New Goal ${nextId}`, subgoals: [] };
+    setCenterDeck((prev) => [...prev, newGoal]);
     setNextId((id) => id + 1);
+    // Navigate to the newly added card
+    setCurrentCardIndex(centerDeck.length);
   };
 
   const handleStartStop = () => {
@@ -469,7 +466,7 @@ function DeepWorkScreen2({ navigation }) {
       const seconds = focusedSeconds % 60;
       const focusedTime = `${minutes}:${seconds.toString().padStart(2, '0')}`;
       
-      const currentGoal = centerDeck[0];
+      const currentGoal = centerDeck[currentCardIndex];
       const totalSubgoals = currentGoal?.subgoals?.length || 0;
       const completedSubgoals = currentGoal?.subgoals?.filter(sg => sg.isCompleted).length || 0;
       
@@ -491,9 +488,9 @@ function DeepWorkScreen2({ navigation }) {
   };
 
   const handleGoalTitleChange = (newText) => {
-    if (centerDeck[0]) {
+    if (centerDeck[currentCardIndex]) {
       const updatedGoals = [...centerDeck];
-      updatedGoals[0] = { ...updatedGoals[0], text: newText };
+      updatedGoals[currentCardIndex] = { ...updatedGoals[currentCardIndex], text: newText };
       setCenterDeck(updatedGoals);
     }
   };
@@ -506,18 +503,10 @@ function DeepWorkScreen2({ navigation }) {
         </View>
       ) : (
         <>
-          <CardPilesRL
-            leftPile={leftPile}
-            rightPile={rightPile}
-            leftPileScale={leftPileScale}
-            rightPileScale={rightPileScale}
-          />
-
-          {/* Main Swipe Zone - Restored to original */}
+          {/* Main Swipe Zone */}
           <SwipableGoalCards
             goals={centerDeck}
-            leftPile={leftPile}
-            rightPile={rightPile}
+            currentCardIndex={currentCardIndex}
             animatedCardStyle={animatedCardStyle}
             gestureHandler={gestureHandler}
             handleAdd={handleAdd}

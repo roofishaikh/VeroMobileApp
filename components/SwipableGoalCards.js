@@ -23,8 +23,7 @@ async function markGoalCompletedForToday(goalId) {
 // Accept all necessary props for full control from parent
 const SwipableGoalCards = ({
   goals,
-  leftPile = [],
-  rightPile = [],
+  currentCardIndex = 0,
   animatedCardStyle,
   gestureHandler,
   handleAdd,
@@ -61,7 +60,7 @@ const SwipableGoalCards = ({
         </View>
       ) : (
         <PanGestureHandler
-          key={goals[0]?.id || 'default'}
+          key={goals[currentCardIndex]?.id || 'default'}
           enabled={true}
           onGestureEvent={gestureHandler}
         >
@@ -75,17 +74,17 @@ const SwipableGoalCards = ({
               <TextInput
                 style={styles.cardText}
                 placeholder="Enter goal title..."
-                value={goals[0]?.text || ''}
+                value={goals[currentCardIndex]?.text || ''}
                 onChangeText={(newText) => {
                   if (onGoalTitleChange) {
                     onGoalTitleChange(newText);
                   }
                 }}
               />
-              {goals[0]?.subgoals?.map((sub, index) => (
+              {goals[currentCardIndex]?.subgoals?.map((sub, index) => (
                 <View key={sub.id} style={styles.subgoalContainer}>
                   <Pressable
-                    onPress={() => toggleSubgoal(0, index)}
+                    onPress={() => toggleSubgoal(currentCardIndex, index)}
                     style={styles.subgoalButton}
                   >
                     <Checkbox
@@ -110,7 +109,7 @@ const SwipableGoalCards = ({
                   <IconButton
                     icon="delete"
                     size={20}
-                    onPress={() => deleteSubgoal(0, index)}
+                    onPress={() => deleteSubgoal(currentCardIndex, index)}
                     style={styles.deleteSubgoalButton}
                   />
                 </View>
@@ -128,7 +127,7 @@ const SwipableGoalCards = ({
                   onEndEditing={(e) => {
                     const text = e.nativeEvent.text.trim();
                     if (text) {
-                      addSubgoalWithText(0, text);
+                      addSubgoalWithText(currentCardIndex, text);
                       setNewSubgoalText("");
                     }
                   }}
@@ -146,7 +145,7 @@ const SwipableGoalCards = ({
             </View>
             <View style={{ position: 'absolute', bottom: 8, left: 0, right: 0, alignItems: 'center' }}>
               <Text style={{ fontSize: 16, color: '#888', fontWeight: 'bold' }}>
-                {`${leftPile.length + 1}/${goals.length + leftPile.length + rightPile.length}`}
+                {`${currentCardIndex + 1}/${goals.length}`}
               </Text>
             </View>
           </Animated.View>
