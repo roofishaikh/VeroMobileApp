@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { View, StyleSheet, Dimensions, Text, Animated } from "react-native";
+import { View, StyleSheet, Dimensions, Text, Animated, ScrollView } from "react-native";
 import GradientScreenWrapper from "../../../components/GradientScreenWrapper";
 import TimeTimer from "../../../components/TimeTimer";
 import PrimaryButton from "../../../components/primaryButton";
@@ -167,12 +167,14 @@ function WeeklyReviewScreen() {
           ]}
         >
           <View style={styles.card}>
-            <Text style={styles.cardTitle}>{currentCard.title}</Text>
-            {currentCard.questions.map((question, index) => (
-              <Text key={index} style={styles.question}>
-                {question}
-              </Text>
-            ))}
+            <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
+              <Text style={styles.cardTitle}>{currentCard.title}</Text>
+              {currentCard.questions.map((question, index) => (
+                <Text key={index} style={styles.question}>
+                  {question}
+                </Text>
+              ))}
+            </ScrollView>
           </View>
         </Animated.View>
         
@@ -241,7 +243,7 @@ const styles = StyleSheet.create({
     padding: 30,
     marginHorizontal: 20,
     width: SCREEN_WIDTH - 40,
-    minHeight: 300,
+    height: 400,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
