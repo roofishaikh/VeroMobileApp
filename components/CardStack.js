@@ -169,7 +169,7 @@ const CardStack = ({
             >
               <Checkbox
                 status={sub.done === true ? 'checked' : 'unchecked'}
-                color="#4CAF50"
+                checkedColor="#4CAF50"
                 uncheckedColor="#ccc"
               />
             </Pressable>

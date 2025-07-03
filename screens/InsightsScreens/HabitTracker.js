@@ -3,7 +3,7 @@ import PrimaryButton from "../../components/primaryButton";
 import React from "react";
 import OutterContainer from "../../components/OutterContainer";
 import * as SecureStore from 'expo-secure-store';
-import { Checkbox } from 'react-native-paper';
+import CustomCheckbox from '../../components/CustomCheckbox';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import * as XLSX from 'xlsx';
@@ -107,29 +107,39 @@ function HabitTracker() {
         <Text style={styles.titleText}>Habit Tracker</Text>
         <Text style={styles.titleCaption}>Track your core rituals and goals</Text>
       </View>
-      <View style={{ flexDirection: 'row', marginBottom: 8 }}>
-        <Text style={{ width: 120, fontWeight: 'bold' }}>Habit</Text>
-        {weekDates.map((d, i) => (
-          <Text key={i} style={{ width: 36, textAlign: 'center', fontWeight: 'bold' }}>{d.toLocaleDateString('en-US', { weekday: 'short' })}</Text>
-        ))}
-      </View>
-      {loading ? <Text>Loading...</Text> : extendedHabitRows.map((row, i) => (
-        <View key={i} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
-          <Text style={{ width: 120 }}>{row.label}</Text>
-          {weekDates.map((d, j) => {
-            const dateStr = formatDate(d);
-            return (
-              <Checkbox
-                key={j}
-                status={isCompleted(row.type, dateStr, row.goalId) ? 'checked' : 'unchecked'}
-                disabled={true}
-                color="#4CAF50"
-                uncheckedColor="#ccc"
-              />
-            );
-          })}
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <View>
+          {/* Header Row */}
+          <View style={styles.headerRow}>
+            <Text style={styles.habitColHeader}>Habit</Text>
+            {weekDates.map((d, i) => (
+              <Text key={i} style={styles.dayColHeader}>
+                {d.toLocaleDateString('en-US', { weekday: 'short' })}
+              </Text>
+            ))}
+          </View>
+          {/* Data Rows */}
+          {loading ? <Text>Loading...</Text> : extendedHabitRows.map((row, i) => (
+            <View key={i} style={styles.dataRow}>
+              <Text style={styles.habitCol}>{row.label}</Text>
+              {weekDates.map((d, j) => {
+                const dateStr = formatDate(d);
+                return (
+                  <View key={j} style={styles.checkboxCol}>
+                    <CustomCheckbox
+                      status={isCompleted(row.type, dateStr, row.goalId) ? 'checked' : 'unchecked'}
+                      disabled={true}
+                      size={22}
+                      color="#4CAF50"
+                      style={{ marginHorizontal: 0 }}
+                    />
+                  </View>
+                );
+              })}
+            </View>
+          ))}
         </View>
-      ))}
+      </ScrollView>
       <PrimaryButton text="Export to Excel" onTap={handleExport} style={{ marginTop: 20 }} />
     </View>
   );
@@ -167,6 +177,42 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     textAlign: "center"
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+    marginTop: 4,
+  },
+  habitColHeader: {
+    width: 120,
+    fontWeight: 'bold',
+    textAlign: 'left',
+    fontSize: 15,
+    marginRight: 2,
+  },
+  dayColHeader: {
+    width: 38,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 15,
+    marginHorizontal: 0,
+  },
+  dataRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  habitCol: {
+    width: 120,
+    textAlign: 'left',
+    fontSize: 14,
+    marginRight: 2,
+  },
+  checkboxCol: {
+    width: 38,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   OptionsCard: {
     width: '100%',

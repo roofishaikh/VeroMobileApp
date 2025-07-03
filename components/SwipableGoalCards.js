@@ -89,7 +89,7 @@ const SwipableGoalCards = ({
                   >
                     <Checkbox
                       status={sub.isCompleted === true ? 'checked' : 'unchecked'}
-                      color="#4CAF50"
+                      checkedColor="#4CAF50"
                       uncheckedColor="#ccc"
                     />
                   </Pressable>
