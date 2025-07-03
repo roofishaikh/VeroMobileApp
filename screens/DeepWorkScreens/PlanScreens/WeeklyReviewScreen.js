@@ -4,6 +4,8 @@ import GradientScreenWrapper from "../../../components/GradientScreenWrapper";
 import TimeTimer from "../../../components/TimeTimer";
 import PrimaryButton from "../../../components/primaryButton";
 import CountdownTimer from "../../../components/CountdownTimer";
+import { useNavigation } from '@react-navigation/native';
+import * as SecureStore from 'expo-secure-store';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -17,6 +19,8 @@ function WeeklyReviewScreen() {
   const slideAnimation = useRef(new Animated.Value(0)).current;
   const [activeTimerIndex, setActiveTimerIndex] = useState(0);
   const [fallbackTimerKey, setFallbackTimerKey] = useState(0);
+  const navigation = useNavigation();
+  const [reviewComplete, setReviewComplete] = useState(false);
   
   // Define the card deck with 4 cards, each with unique questions
   const cards = [
@@ -86,6 +90,7 @@ function WeeklyReviewScreen() {
     // Start the first countdown timer automatically when screen renders
     setIsTimerRunning(true);
     setActiveTimerIndex(0);
+    setReviewComplete(false);
   }, []);
 
   // Handle countdown timer completion - triggers auto-swipe
@@ -107,16 +112,37 @@ function WeeklyReviewScreen() {
     }
   };
 
-  const handleTimerComplete = (timerIndex) => {
-    // Move to next timer
-    const nextTimerIndex = (timerIndex + 1) % timerDurations.length;
-    setActiveTimerIndex(nextTimerIndex);
-    
-    // Move to next card
-    const nextCardIndex = (currentCardIndex + 1) % cards.length;
-    setCurrentCardIndex(nextCardIndex);
-    
-    // Reset fallback timer to sync with next timer
+  // Helper to mark weekly ritual complete
+  async function markWeeklyRitualComplete() {
+    const today = new Date().toISOString().slice(0, 10);
+    let habitJson = await SecureStore.getItemAsync('vero_habit_data');
+    let habitObj = habitJson ? JSON.parse(habitJson) : {};
+    if (!habitObj[today]) habitObj[today] = {};
+    habitObj[today]['weekly_ritual'] = true;
+    await SecureStore.setItemAsync('vero_habit_data', JSON.stringify(habitObj));
+  }
+
+  // Add a function to reset state
+  const resetWeeklyReview = () => {
+    setCurrentCardIndex(0);
+    setActiveTimerIndex(0);
+    setFallbackTimerKey(prev => prev + 1); // force fallback timer to reset
+    setIsTimerRunning(false);
+    setButtonText("START JOURNALING");
+  };
+
+  const handleTimerComplete = async (timerIndex) => {
+    // If this was the 3rd timer (index 2), mark weekly ritual complete and navigate
+    if (timerIndex === 2) {
+      setReviewComplete(true);
+      await markWeeklyRitualComplete();
+      navigation.navigate('Insights');
+      resetWeeklyReview();
+      return;
+    }
+    // Move to next timer (no looping)
+    setActiveTimerIndex(timerIndex + 1);
+    setCurrentCardIndex(currentCardIndex + 1);
     setFallbackTimerKey(prev => prev + 1);
   };
 
@@ -156,7 +182,7 @@ function WeeklyReviewScreen() {
             <CountdownTimer
               key={`timer-${index}`}
               duration={duration}
-              isActive={index === activeTimerIndex}
+              isActive={!reviewComplete && index === activeTimerIndex}
               onComplete={() => handleTimerComplete(index)}
               colorIndex={index}
               showSeconds={false}
@@ -167,7 +193,7 @@ function WeeklyReviewScreen() {
           <CountdownTimer
             key={`fallback-${fallbackTimerKey}`}
             duration={timerDurations[activeTimerIndex]}
-            isActive={true}
+            isActive={!reviewComplete}
             onComplete={handleFallbackTimerComplete}
             isFallback={true}
             showSeconds={true}

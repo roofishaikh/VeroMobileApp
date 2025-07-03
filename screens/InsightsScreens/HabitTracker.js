@@ -92,7 +92,13 @@ function HabitTracker() {
     { label: 'Morning Ritual', type: 'morning' },
     { label: 'Evening Ritual', type: 'evening' },
     { label: 'Check-in', type: 'checkin' },
-    ...goals.map(g => ({ label: g.text, type: 'goal', goalId: g.id }))
+    ...goals.map(g => ({ label: g.text, type: 'goal', goalId: g.id })),
+  ];
+  // Add weekly and monthly rituals always after goals
+  const extendedHabitRows = [
+    ...habitRows,
+    { label: 'Weekly Ritual', type: 'weekly_ritual' },
+    { label: 'Monthly Ritual', type: 'monthly_ritual' },
   ];
 
   return (
@@ -107,7 +113,7 @@ function HabitTracker() {
           <Text key={i} style={{ width: 36, textAlign: 'center', fontWeight: 'bold' }}>{d.toLocaleDateString('en-US', { weekday: 'short' })}</Text>
         ))}
       </View>
-      {loading ? <Text>Loading...</Text> : habitRows.map((row, i) => (
+      {loading ? <Text>Loading...</Text> : extendedHabitRows.map((row, i) => (
         <View key={i} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
           <Text style={{ width: 120 }}>{row.label}</Text>
           {weekDates.map((d, j) => {
@@ -117,6 +123,8 @@ function HabitTracker() {
                 key={j}
                 status={isCompleted(row.type, dateStr, row.goalId) ? 'checked' : 'unchecked'}
                 disabled={true}
+                color="#4CAF50"
+                uncheckedColor="#ccc"
               />
             );
           })}
